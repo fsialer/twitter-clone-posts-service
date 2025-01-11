@@ -1,4 +1,4 @@
-package com.fernanando.ms.posts.app.twitter_clone_posts_service;
+package com.fernanando.ms.posts.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
