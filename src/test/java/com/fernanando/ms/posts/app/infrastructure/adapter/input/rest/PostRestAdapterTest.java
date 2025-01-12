@@ -14,8 +14,9 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -52,5 +53,24 @@ public class PostRestAdapterTest {
         Mockito.verify(postInputPort,times(1)).findAll();
         Mockito.verify(postRestMapper,times(1)).toPostsResponse(any(Flux.class));
     }
+
+    @Test
+    @DisplayName("When Post Identifier Is Correct Expect Post Information Successfully")
+    void When_PostIdentifierIsCorrect_Expect_PostInformationSuccessfully() {
+        PostResponse postResponse = TestUtilPost.buildPostResponseMock();
+        Post post = TestUtilPost.buildPostMock();
+        when(postInputPort.findById(anyString())).thenReturn(Mono.just(post));
+        when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
+        webTestClient.get()
+                .uri("/posts/{id}",1L)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.content").isEqualTo("Hello everybody");
+
+       Mockito.verify(postInputPort,times(1)).findById(anyString());
+        Mockito.verify(postRestMapper,times(1)).toPostResponse(any(Post.class));
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package com.fernanando.ms.posts.app.application.services;
 
 import com.fernanando.ms.posts.app.application.ports.output.PostPersistencePort;
+import com.fernanando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernanando.ms.posts.app.domain.models.Post;
 import com.fernanando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
@@ -11,8 +12,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +39,30 @@ public class PostServiceTest {
                 .expectNext(post)
                 .verifyComplete();
         Mockito.verify(postPersistencePort,times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("When Post Identifier Is Correct Except Post Information Correct")
+    void When_UserIdentifierIsCorrect_Except_UserInformationCorrect(){
+        Post post= TestUtilPost.buildPostMock();
+        when(postPersistencePort.findById(anyString())).thenReturn(Mono.just(post));
+        Mono<Post> postMono=postService.findById("1");
+        StepVerifier.create(postMono)
+                .expectNext(post)
+                .verifyComplete();
+        Mockito.verify(postPersistencePort,times(1)).findById(anyString());
+    }
+
+    @Test
+    @DisplayName("Expect PostNotFoundException When Post Identifier Is Invalid")
+    void Expect_PostNotFoundException_When_PostIdentifierIsInvalid(){
+        Post post= TestUtilPost.buildPostMock();
+        when(postPersistencePort.findById(anyString())).thenReturn(Mono.empty());
+        Mono<Post> userMono=postService.findById("1");
+        StepVerifier.create(userMono)
+                .expectError(PostNotFoundException.class)
+                .verify();
+        Mockito.verify(postPersistencePort,times(1)).findById(anyString());
     }
 
 }

@@ -7,6 +7,7 @@ import com.fernanando.ms.posts.app.infrastructure.adapter.output.persistence.rep
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -16,5 +17,10 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     @Override
     public Flux<Post> findAll() {
         return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAll());
+    }
+
+    @Override
+    public Mono<Post> findById(String id) {
+        return postReactiveMongoRepository.findById(id).map(postPersistenceMapper::toPost);
     }
 }
