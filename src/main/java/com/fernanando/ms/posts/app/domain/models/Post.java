@@ -13,4 +13,5 @@ public class Post {
     private String id;
     private String content;
     private LocalDateTime datePost;
+    private User user;
 }

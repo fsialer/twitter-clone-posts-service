@@ -15,8 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -64,5 +63,21 @@ public class PostServiceTest {
                 .verify();
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
     }
+
+
+    @Test
+    @DisplayName("When Post Is Saved Successfully Expect Post Information Correct")
+    void When_PostIsSavedSuccessfully_Expect_PostInformationCorrect() {
+        Post post = TestUtilPost.buildPostMock();
+        when(postPersistencePort.save(any(Post.class))).thenReturn(Mono.just(post));
+
+        Mono<Post> savedPost = postService.save(post);
+
+        StepVerifier.create(savedPost)
+                .expectNext(post)
+                .verifyComplete();
+        Mockito.verify(postPersistencePort, times(1)).save(any(Post.class));
+    }
+
 
 }

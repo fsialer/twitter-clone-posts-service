@@ -1,8 +1,11 @@
 package com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.mapper;
 
 import com.fernanando.ms.posts.app.domain.models.Post;
+import com.fernanando.ms.posts.app.domain.models.User;
+import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -17,4 +20,13 @@ public interface PostRestMapper {
     }
 
     PostResponse toPostResponse(Post post);
+
+    @Mapping(target = "user",expression = "java(mapUser(rq))")
+    Post toPost(CreatePostRequest rq);
+
+    default User mapUser(CreatePostRequest rq){
+        return User.builder()
+                .id(rq.getUserId())
+                .build();
+    }
 }

@@ -1,8 +1,10 @@
 package com.fernanando.ms.posts.app.infrastructure.adapter.output.persistence;
 
 import com.fernanando.ms.posts.app.domain.models.Post;
+import com.fernanando.ms.posts.app.domain.models.User;
 import com.fernanando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostPersistenceMapper;
 import com.fernanando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
+import com.fernanando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import com.fernanando.ms.posts.app.infrastructure.adapter.output.persistence.repository.PostReactiveMongoRepository;
 import com.fernanando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
@@ -62,5 +64,27 @@ public class PostPersistenceAdapterTest {
         Mockito.verify(postReactiveMongoRepository,times(1)).findById(anyString());
         Mockito.verify(postPersistenceMapper,times(1)).toPost(any(PostDocument.class));
     }
+
+
+    @Test
+    @DisplayName("When Post Is Saved Successfully Expect Post Information Correct")
+    void When_PostIsSavedSuccessfully_Expect_PostInformationCorrect() {
+        Post post = TestUtilPost.buildPostMock();
+        PostDocument postDocument = TestUtilPost.buildPostDocumentMock();
+
+        when(postPersistenceMapper.toPostDocument(any(Post.class))).thenReturn(postDocument);
+        when(postReactiveMongoRepository.save(any(PostDocument.class))).thenReturn(Mono.just(postDocument));
+        when(postPersistenceMapper.toPost(any(Mono.class))).thenReturn(Mono.just(post));
+
+        Mono<Post> savedPost = postPersistenceAdapter.save(post);
+
+        StepVerifier.create(savedPost)
+                .expectNext(post)
+                .verifyComplete();
+        Mockito.verify(postPersistenceMapper, times(1)).toPostDocument(any(Post.class));
+        Mockito.verify(postReactiveMongoRepository, times(1)).save(any(PostDocument.class));
+        Mockito.verify(postPersistenceMapper, times(1)).toPost(any(Mono.class));
+    }
+
 
 }

@@ -23,4 +23,9 @@ public class PostService implements PostInputPort {
     public Mono<Post> findById(String id) {
         return postPersistencePort.findById(id).switchIfEmpty(Mono.error(PostNotFoundException::new));
     }
+
+    @Override
+    public Mono<Post> save(Post post) {
+        return postPersistencePort.save(post);
+    }
 }

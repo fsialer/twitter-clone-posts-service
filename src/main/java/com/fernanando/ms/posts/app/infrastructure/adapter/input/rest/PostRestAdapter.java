@@ -2,13 +2,12 @@ package com.fernanando.ms.posts.app.infrastructure.adapter.input.rest;
 
 import com.fernanando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -31,6 +30,15 @@ public class PostRestAdapter {
         return postInputPort.findById(id)
                 .flatMap(post->{
                     return Mono.just(ResponseEntity.ok(postRestMapper.toPostResponse(post)));
+                });
+    }
+
+    @PostMapping
+    public Mono<ResponseEntity<PostResponse>> save(@Valid @RequestBody  CreatePostRequest rq){
+        return postInputPort.save(postRestMapper.toPost(rq))
+                .flatMap(post -> {
+                    String location = "/posts/".concat(post.getId().toString());
+                    return Mono.just(ResponseEntity.created(URI.create(location)).body(postRestMapper.toPostResponse(post)));
                 });
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernanando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernanando.ms.posts.app.domain.models.Post;
 import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernanando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernanando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
@@ -70,6 +71,30 @@ public class PostRestAdapterTest {
 
        Mockito.verify(postInputPort,times(1)).findById(anyString());
         Mockito.verify(postRestMapper,times(1)).toPostResponse(any(Post.class));
+    }
+
+    @Test
+    @DisplayName("When Post Is Saved Successfully Expect Post Information Correct")
+    void When_PostIsSavedSuccessfully_Expect_PostInformationCorrect() {
+        CreatePostRequest createPostRequest = TestUtilPost.buildCreatePostRequestMock();
+        Post post = TestUtilPost.buildPostMock();
+        PostResponse postResponse = TestUtilPost.buildPostResponseMock();
+
+        when(postRestMapper.toPost(any(CreatePostRequest.class))).thenReturn(post);
+        when(postInputPort.save(any(Post.class))).thenReturn(Mono.just(post));
+        when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
+
+        webTestClient.post()
+                .uri("/posts")
+                .bodyValue(createPostRequest)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.content").isEqualTo("Hello everybody");
+
+        Mockito.verify(postRestMapper, times(1)).toPost(any(CreatePostRequest.class));
+        Mockito.verify(postInputPort, times(1)).save(any(Post.class));
+        Mockito.verify(postRestMapper, times(1)).toPostResponse(any(Post.class));
     }
 
 
