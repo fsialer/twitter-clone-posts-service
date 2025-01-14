@@ -107,5 +107,36 @@ public class PostServiceTest {
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
     }
 
+    @Test
+    @DisplayName("When Post Exists Expect Post Deleted Successfully")
+    void When_PostExists_Expect_PostDeletedSuccessfully() {
+        Post  post = TestUtilPost.buildPostMock();
+        when(postPersistencePort.findById(anyString())).thenReturn(Mono.just(post));
+        when(postPersistencePort.delete(anyString())).thenReturn(Mono.empty());
+
+        Mono<Void> result = postService.delete("1");
+
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        Mockito.verify(postPersistencePort, times(1)).findById(anyString());
+        Mockito.verify(postPersistencePort, times(1)).delete(anyString());
+    }
+
+    @Test
+    @DisplayName("Expect PostNotFoundException When Post Does Not Exist")
+    void Expect_PostNotFoundException_When_PostDoesNotExist() {
+        when(postPersistencePort.findById(anyString())).thenReturn(Mono.empty());
+
+        Mono<Void> result = postService.delete("1");
+
+        StepVerifier.create(result)
+                .expectError(PostNotFoundException.class)
+                .verify();
+
+        Mockito.verify(postPersistencePort, times(1)).findById(anyString());
+        Mockito.verify(postPersistencePort, Mockito.never()).delete(anyString());
+    }
+
 
 }

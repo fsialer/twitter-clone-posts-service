@@ -38,4 +38,13 @@ public class PostService implements PostInputPort {
                     return postPersistencePort.save(postUpdated);
                 });
     }
+
+    @Override
+    public Mono<Void> delete(String id) {
+        return postPersistencePort.findById(id)
+                .switchIfEmpty(Mono.error(PostNotFoundException::new))
+                .flatMap(postDelete->{
+                    return postPersistencePort.delete(id);
+                });
+    }
 }

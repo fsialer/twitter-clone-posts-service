@@ -9,4 +9,5 @@ public interface PostInputPort {
     Mono<Post> findById(String id);
     Mono<Post> save(Post post);
     Mono<Post> update(String id,Post post);
+    Mono<Void> delete(String id);
 }

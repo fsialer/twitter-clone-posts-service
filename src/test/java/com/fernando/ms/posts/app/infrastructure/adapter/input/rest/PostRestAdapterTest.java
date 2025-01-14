@@ -120,5 +120,18 @@ public class PostRestAdapterTest {
                 .jsonPath("$.content").isEqualTo("Hello everybody");
     }
 
+    @Test
+    @DisplayName("When Post Exists Expect Post Deleted Successfully")
+    void When_PostExists_Expect_PostDeletedSuccessfully() {
+        when(postInputPort.delete(anyString())).thenReturn(Mono.empty());
+
+        webTestClient.delete()
+                .uri("/posts/{id}", 1L)
+                .exchange()
+                .expectStatus().isNoContent();
+
+        Mockito.verify(postInputPort, times(1)).delete(anyString());
+    }
+
 
 }

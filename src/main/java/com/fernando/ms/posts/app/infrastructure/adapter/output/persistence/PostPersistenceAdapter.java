@@ -39,4 +39,9 @@ public class PostPersistenceAdapter implements PostPersistencePort {
 
         return postPersistenceMapper.toPost(postReactiveMongoRepository.save(postDocument));
     }
+
+    @Override
+    public Mono<Void> delete(String id) {
+        return postReactiveMongoRepository.deleteById(id);
+    }
 }

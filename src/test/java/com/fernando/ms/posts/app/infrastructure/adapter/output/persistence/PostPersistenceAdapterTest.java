@@ -84,5 +84,15 @@ public class PostPersistenceAdapterTest {
         Mockito.verify(postPersistenceMapper, times(1)).toPost(any(Mono.class));
     }
 
+    @Test
+    @DisplayName("When Post Exists Expect Post Deleted Successfully")
+    void When_UserExists_Expect_UserDeletedSuccessfully() {
+        when(postReactiveMongoRepository.deleteById(anyString())).thenReturn(Mono.empty());
+        Mono<Void> result = postPersistenceAdapter.delete("1");
+        StepVerifier.create(result)
+                .verifyComplete();
+        Mockito.verify(postReactiveMongoRepository, times(1)).deleteById(anyString());
+    }
+
 
 }

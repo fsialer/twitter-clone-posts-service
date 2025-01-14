@@ -8,4 +8,5 @@ public interface PostPersistencePort {
     Flux<Post> findAll();
     Mono<Post> findById(String id);
     Mono<Post> save(Post post);
+    Mono<Void> delete(String id);
 }
