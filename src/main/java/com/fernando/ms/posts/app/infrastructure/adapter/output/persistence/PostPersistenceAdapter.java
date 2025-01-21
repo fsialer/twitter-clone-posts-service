@@ -44,4 +44,9 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     public Mono<Void> delete(String id) {
         return postReactiveMongoRepository.deleteById(id);
     }
+
+    @Override
+    public Mono<Boolean> verify(String id) {
+        return postReactiveMongoRepository.existsById(id);
+    }
 }

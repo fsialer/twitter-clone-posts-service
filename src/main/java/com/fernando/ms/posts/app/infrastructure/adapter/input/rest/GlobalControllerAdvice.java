@@ -6,20 +6,18 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.respon
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.enums.ErrorType.FUNCTIONAL;
-import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.enums.ErrorType.SYSTEM;
+import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.enums.ErrorType.FUNCTIONAL;
+import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.enums.ErrorType.SYSTEM;
 import static com.fernando.ms.posts.app.infrastructure.utils.ErrorCatalog.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;

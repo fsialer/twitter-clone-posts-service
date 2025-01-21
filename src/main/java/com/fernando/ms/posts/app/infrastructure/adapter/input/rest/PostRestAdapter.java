@@ -1,11 +1,11 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,6 +62,14 @@ public class PostRestAdapter {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> delete(@PathVariable("id") String id){
        return postInputPort.delete(id);
+    }
+
+    @GetMapping("/{id}/verify")
+    public Mono<ResponseEntity<ExistsPostResponse>> verify(@PathVariable("id") String id){
+       return postInputPort.verify(id)
+               .flatMap(exists->{
+                   return Mono.just(ResponseEntity.ok().body(postRestMapper.toExistsPostResponse(exists)));
+               });
     }
 
 }

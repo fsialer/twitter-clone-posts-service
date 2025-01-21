@@ -4,6 +4,7 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,4 +33,10 @@ public interface PostRestMapper {
     }
 
     Post toPost(UpdatePostRequest rq);
+
+    default ExistsPostResponse toExistsPostResponse(Boolean exists){
+        return ExistsPostResponse.builder()
+                .exists(exists)
+                .build();
+    }
 }

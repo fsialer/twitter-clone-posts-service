@@ -159,5 +159,35 @@ public class PostServiceTest {
         Mockito.verify(postPersistencePort, Mockito.never()).delete(anyString());
     }
 
+    @Test
+    @DisplayName("When Post Verification Is Successful Expect Post Verified")
+    void When_UserVerificationIsSuccessful_Expect_UserVerified() {
+
+        when(postPersistencePort.verify(anyString())).thenReturn(Mono.just(true));
+
+        Mono<Boolean> result = postService.verify("678318b2c8dda45d9a6c300d");
+
+        StepVerifier.create(result)
+                .expectNext(true)
+                .verifyComplete();
+
+        Mockito.verify(postPersistencePort, times(1)).verify(anyString());
+    }
+
+    @Test
+    @DisplayName("When Post Verification Is Incorrect Expect Post Do Not Verified")
+    void When_UserVerificationIsIncorrect_Expect_UserDoNotVerified() {
+
+        when(postPersistencePort.verify(anyString())).thenReturn(Mono.just(false));
+
+        Mono<Boolean> result = postService.verify("678318b2c8dda45d9a6c300d");
+
+        StepVerifier.create(result)
+                .expectNext(false)
+                .verifyComplete();
+
+        Mockito.verify(postPersistencePort, times(1)).verify(anyString());
+    }
+
 
 }

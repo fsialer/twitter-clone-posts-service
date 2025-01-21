@@ -4,6 +4,7 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
@@ -52,4 +53,12 @@ public class TestUtilPost {
                 .content("Hello everybody")
                 .build();
     }
+
+    public static ExistsPostResponse buildExistsPostResponseMock(){
+        return ExistsPostResponse.builder()
+                .exists(true)
+                .build();
+    }
+
+
 }

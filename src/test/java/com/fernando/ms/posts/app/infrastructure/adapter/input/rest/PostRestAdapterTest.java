@@ -7,6 +7,7 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
@@ -131,6 +132,44 @@ public class PostRestAdapterTest {
                 .expectStatus().isNoContent();
 
         Mockito.verify(postInputPort, times(1)).delete(anyString());
+    }
+
+    @Test
+    @DisplayName("When Post Verification Is Successful Expect Post Verified")
+    void When_PostVerificationIsSuccessful_Expect_PostVerified() {
+        ExistsPostResponse existsPostResponse = TestUtilPost.buildExistsPostResponseMock();
+
+        when(postInputPort.verify(anyString())).thenReturn(Mono.just(true));
+        when(postRestMapper.toExistsPostResponse(anyBoolean())).thenReturn(existsPostResponse);
+
+        webTestClient.get()
+                .uri("/posts/{id}/verify", 1L)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.exists").isEqualTo(true);
+
+        Mockito.verify(postInputPort, times(1)).verify(anyString());
+        Mockito.verify(postRestMapper, times(1)).toExistsPostResponse(anyBoolean());
+    }
+
+    @Test
+    @DisplayName("When Post Verification Is Incorrect Expect Post Do Not Verified")
+    void When_PostVerificationIsIncorrect_Expect_PostDoNotVerified() {
+        ExistsPostResponse existsPostResponse = TestUtilPost.buildExistsPostResponseMock();
+        existsPostResponse.setExists(false);
+        when(postInputPort.verify(anyString())).thenReturn(Mono.just(false));
+        when(postRestMapper.toExistsPostResponse(anyBoolean())).thenReturn(existsPostResponse);
+
+        webTestClient.get()
+                .uri("/posts/{id}/verify", 1L)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.exists").isEqualTo(false);
+
+        Mockito.verify(postInputPort, times(1)).verify(anyString());
+        Mockito.verify(postRestMapper, times(1)).toExistsPostResponse(anyBoolean());
     }
 
 

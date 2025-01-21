@@ -94,5 +94,18 @@ public class PostPersistenceAdapterTest {
         Mockito.verify(postReactiveMongoRepository, times(1)).deleteById(anyString());
     }
 
+    @Test
+    @DisplayName("When Post Verification Is Successful Expect Post Verified")
+    void When_PostVerificationIsSuccessful_Expect_PostVerified() {
+        when(postReactiveMongoRepository.existsById(anyString())).thenReturn(Mono.just(true));
+
+        Mono<Boolean> result = postPersistenceAdapter.verify("678318b2c8dda45d9a6c300d");
+
+        StepVerifier.create(result)
+                .expectNext(true)
+                .verifyComplete();
+
+        Mockito.verify(postReactiveMongoRepository, times(1)).existsById(anyString());
+    }
 
 }

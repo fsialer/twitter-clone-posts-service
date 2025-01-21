@@ -10,4 +10,5 @@ public interface PostInputPort {
     Mono<Post> save(Post post);
     Mono<Post> update(String id,Post post);
     Mono<Void> delete(String id);
+    Mono<Boolean> verify(String id);
 }

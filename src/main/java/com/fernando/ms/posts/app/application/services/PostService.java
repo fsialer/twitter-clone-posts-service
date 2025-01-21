@@ -62,4 +62,9 @@ public class PostService implements PostInputPort {
                     return postPersistencePort.delete(id);
                 });
     }
+
+    @Override
+    public Mono<Boolean> verify(String id) {
+        return postPersistencePort.verify(id);
+    }
 }
