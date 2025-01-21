@@ -1,15 +1,18 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -18,13 +21,15 @@ import java.util.Collections;
 import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.enums.ErrorType.FUNCTIONAL;
 import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.enums.ErrorType.SYSTEM;
 import static com.fernando.ms.posts.app.infrastructure.utils.ErrorCatalog.*;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(PostNotFoundException.class)
-    public Mono<ErrorResponse> handleUserNotFoundException() {
+    public Mono<ErrorResponse> handlePostNotFoundException() {
         return Mono.just(ErrorResponse.builder()
                 .code(POST_NOT_FOUND.getCode())
                 .type(FUNCTIONAL)
@@ -48,15 +53,26 @@ public class GlobalControllerAdvice {
                 .timestamp(LocalDate.now().toString())
                 .build());
     }
+
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Mono<ErrorResponse> handleUserNotFoundException() {
+        return Mono.just(ErrorResponse.builder()
+                .code(USER_NOT_FOUND.getCode())
+                .type(FUNCTIONAL)
+                .message(USER_NOT_FOUND.getMessage())
+                .timestamp(LocalDate.now().toString())
+                .build());
+    }
     
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public Mono<ErrorResponse> handleException(Exception e) {
 
         return Mono.just(ErrorResponse.builder()
-                .code(INTERNAL_SERVER_ERROR.getCode())
+                .code(POST_INTERNAL_SERVER_ERROR.getCode())
                 .type(SYSTEM)
-                .message(INTERNAL_SERVER_ERROR.getMessage())
+                .message(POST_INTERNAL_SERVER_ERROR.getMessage())
                 .details(Collections.singletonList(e.getMessage()))
                 .timestamp(LocalDate.now().toString())
                 .build());

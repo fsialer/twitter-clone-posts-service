@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
+import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
+import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +65,8 @@ public class GlobalControllerAdviceTest {
                 .expectStatus().is5xxServerError()
                 .expectBody(ErrorResponse.class)
                 .value(response -> {
-                    assert response.getCode().equals(INTERNAL_SERVER_ERROR.getCode());
-                    assert response.getMessage().equals(INTERNAL_SERVER_ERROR.getMessage());
+                    assert response.getCode().equals(POST_INTERNAL_SERVER_ERROR.getCode());
+                    assert response.getMessage().equals(POST_INTERNAL_SERVER_ERROR.getMessage());
                 });
     }
 
@@ -85,6 +88,27 @@ public class GlobalControllerAdviceTest {
                 .value(response -> {
                     assert response.getCode().equals(POST_BAD_PARAMETERS.getCode());
                     assert response.getMessage().equals(POST_BAD_PARAMETERS.getMessage());
+                });
+    }
+
+    @Test
+    @DisplayName("Expect UserNotFoundException When User Identifier Is Invalid")
+    void Expect_UserNotFoundException_When_UserIdentifierIsInvalid() throws JsonProcessingException {
+        CreatePostRequest createUserRequest= TestUtilPost.buildCreatePostRequestMock();
+        Post post= TestUtilPost.buildPostMock();
+        when(postRestMapper.toPost(any(CreatePostRequest.class))).thenReturn(post);
+        when(postInputPort.save(any(Post.class))).thenReturn(Mono.error(new UserNotFoundException()));
+
+        webTestClient.post()
+                .uri("/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(objectMapper.writeValueAsString(createUserRequest))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assert response.getCode().equals(USER_NOT_FOUND.getCode());
+                    assert response.getMessage().equals(USER_NOT_FOUND.getMessage());
                 });
     }
 

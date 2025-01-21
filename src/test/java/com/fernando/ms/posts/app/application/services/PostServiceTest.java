@@ -1,7 +1,9 @@
 package com.fernando.ms.posts.app.application.services;
 
+import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +29,9 @@ public class PostServiceTest {
 
     @InjectMocks
     private PostService postService;
+
+    @Mock
+    private ExternalUserOutputPort externalUserOutputPort;
 
     @Test
     @DisplayName("When Posts Information Is Correct Expect A List Posts")
@@ -70,13 +76,28 @@ public class PostServiceTest {
     void When_PostIsSavedSuccessfully_Expect_PostInformationCorrect() {
         Post post = TestUtilPost.buildPostMock();
         when(postPersistencePort.save(any(Post.class))).thenReturn(Mono.just(post));
-
+        when(externalUserOutputPort.verify(anyLong())).thenReturn(Mono.just(true));
         Mono<Post> savedPost = postService.save(post);
 
         StepVerifier.create(savedPost)
                 .expectNext(post)
                 .verifyComplete();
         Mockito.verify(postPersistencePort, times(1)).save(any(Post.class));
+        Mockito.verify(externalUserOutputPort, Mockito.times(1)).verify(anyLong());
+    }
+
+    @Test
+    @DisplayName("Expect UserNotFoundException When User Does Not Exist")
+    void Expect_UserNotFoundException_When_User_Does_Not_Exist() {
+        Post post = TestUtilPost.buildPostMock();
+        when(externalUserOutputPort.verify(anyLong())).thenReturn(Mono.just(false));
+        Mono<Post> savedPost = postService.save(post);
+
+        StepVerifier.create(savedPost)
+                .expectError(UserNotFoundException.class)
+                .verify();
+        Mockito.verify(postPersistencePort,Mockito.never()).save(any(Post.class));
+        Mockito.verify(externalUserOutputPort, Mockito.times(1)).verify(anyLong());
     }
 
     @Test

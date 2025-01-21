@@ -2,11 +2,12 @@ server:
   port: 8081
 spring:
   application:
-    name:twitter-clone-posts-service
+    name: twitter-clone-posts-service
   jackson:
     default-property-inclusion: NON_NULL
   data:
     mongodb:
       uri: mongodb://localhost:27017/tc_posts_db
-
+users-service:
+  url: ${USER_URL:http://localhost:8080/users}
 

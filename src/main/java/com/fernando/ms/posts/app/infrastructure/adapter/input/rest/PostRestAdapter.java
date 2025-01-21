@@ -1,5 +1,7 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
@@ -14,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ import java.net.URI;
 public class PostRestAdapter {
    private final PostInputPort postInputPort;
    private final PostRestMapper postRestMapper;
+   private final ObjectMapper objectMapper;
 
    @GetMapping
     public Flux<PostResponse> findAll(){
@@ -36,10 +40,13 @@ public class PostRestAdapter {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<PostResponse>> save(@Valid @RequestBody  CreatePostRequest rq){
+    public Mono<ResponseEntity<PostResponse>> save(
+            @Valid @RequestBody  CreatePostRequest rq
+    ) {
+
         return postInputPort.save(postRestMapper.toPost(rq))
                 .flatMap(post -> {
-                    String location = "/posts/".concat(post.getId().toString());
+                    String location = "/posts/".concat(post.getId());
                     return Mono.just(ResponseEntity.created(URI.create(location)).body(postRestMapper.toPostResponse(post)));
                 });
     }
