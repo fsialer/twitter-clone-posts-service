@@ -1,9 +1,11 @@
 package com.fernando.ms.posts.app.application.services;
 
+import com.fernando.ms.posts.app.application.ports.output.ExternalFollowerOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
+import com.fernando.ms.posts.app.domain.models.Follower;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
@@ -35,6 +37,9 @@ public class PostServiceTest {
 
     @Mock
     private ExternalUserOutputPort externalUserOutputPort;
+
+    @Mock
+    private ExternalFollowerOutputPort externalFollowerOutputPort;
 
     @Test
     @DisplayName("When Posts Information Is Correct Expect A List Posts")
@@ -210,6 +215,34 @@ public class PostServiceTest {
 
         Mockito.verify(externalUserOutputPort, Mockito.times(1)).findById(anyLong());
         Mockito.verify(postPersistencePort, Mockito.times(1)).findAllPostMe(any(User.class), anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("When Follower Id Is Provided Expect List Of Recent Posts")
+    void When_FollowerIdIsProvided_Expect_ListOfRecentPosts() {
+        Post post = TestUtilPost.buildPostMock();
+        Follower follower =Follower.builder()
+                .followed(1L)
+                .follower(2L)
+                .build();
+        User user = TestUtilsUser.buildUserMock();
+
+        when(externalFollowerOutputPort.findFollowedByFollower(anyLong(), anyLong(), anyLong()))
+                .thenReturn(Flux.just(follower));
+        when(postPersistencePort.findAllPostRecent(anyList(), anyLong(), anyLong()))
+                .thenReturn(Flux.just(post));
+        when(externalUserOutputPort.findById(anyLong()))
+                .thenReturn(Mono.just(user));
+
+        Flux<Post> posts = postService.findAllPostRecent(1L, 10L, 0L);
+
+        StepVerifier.create(posts)
+                .expectNextMatches(p -> p.getUser().getId().equals(user.getId()))
+                .verifyComplete();
+
+        Mockito.verify(externalFollowerOutputPort, times(1)).findFollowedByFollower(anyLong(), anyLong(), anyLong());
+        Mockito.verify(postPersistencePort, times(1)).findAllPostRecent(anyList(), anyLong(), anyLong());
+        Mockito.verify(externalUserOutputPort, times(1)).findById(anyLong());
     }
 
 

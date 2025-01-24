@@ -12,4 +12,5 @@ public interface PostInputPort {
     Mono<Void> delete(String id);
     Mono<Boolean> verify(String id);
     Flux<Post> findAllPostMe(Long userId, Long size,Long page);
+    Flux<Post> findAllPostRecent(Long followerId, Long size,Long page);
 }

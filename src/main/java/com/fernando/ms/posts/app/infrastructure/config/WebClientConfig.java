@@ -11,4 +11,9 @@ public class WebClientConfig {
         return builder.baseUrl("http://localhost:8080").build();
     }
 
+    @Bean
+    public WebClient webClientFollower(WebClient.Builder builder) {
+        return builder.baseUrl("http://localhost:8084").build();
+    }
+
 }

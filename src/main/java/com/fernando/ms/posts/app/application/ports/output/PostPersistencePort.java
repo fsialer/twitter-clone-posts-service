@@ -13,5 +13,6 @@ public interface PostPersistencePort {
     Mono<Boolean> verify(String id);
     Flux<Post> findAllPostMe(User user);
     Flux<Post> findAllPostMe(User user,Long size,Long page);
+    Flux<Post> findAllPostRecent(Iterable<User> followed,Long size,Long page);
 
 }

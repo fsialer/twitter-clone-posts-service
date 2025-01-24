@@ -60,4 +60,10 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     public Flux<Post> findAllPostMe(User user, Long size, Long page) {
         return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAllUserAndPageAndSize(postPersistenceMapper.toPostUser(user),size,page));
     }
+
+    @Override
+    public Flux<Post> findAllPostRecent(Iterable<User> followed,Long size,Long page) {
+
+        return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAllPostRecent(postPersistenceMapper.toPostUsers(followed),size,page));
+    }
 }

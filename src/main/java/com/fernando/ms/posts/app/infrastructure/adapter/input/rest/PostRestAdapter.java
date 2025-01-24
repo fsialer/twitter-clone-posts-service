@@ -82,4 +82,10 @@ public class PostRestAdapter {
         return postRestMapper.toPostsUserResponse(postInputPort.findAllPostMe(userId,size,page));
     }
 
+    @GetMapping("/{follower}/recent")
+    public Flux<PostUserResponse> findAllPostRecent(@PathVariable("follower") Long followerId,@RequestParam(name = "size",required = false,defaultValue = "10") Long size,
+                                                    @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
+       return postRestMapper.toPostsUserResponse(postInputPort.findAllPostRecent(followerId,size,page));
+    }
+
 }

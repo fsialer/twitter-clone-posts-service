@@ -6,4 +6,5 @@ import reactor.core.publisher.Flux;
 
 public interface PostReactiveMongoRepositoryCustom {
     Flux<PostDocument> findAllUserAndPageAndSize(PostUser postUser,Long size,Long page);
+    Flux<PostDocument> findAllPostRecent(Iterable<PostUser> followed, Long size, Long page);
 }

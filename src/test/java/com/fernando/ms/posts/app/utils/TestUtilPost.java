@@ -74,6 +74,12 @@ public class TestUtilPost {
                 .build();
     }
 
+    public static PostUser buildPostUserMock(){
+        return PostUser.builder()
+                .userId(1L)
+                .build();
+    }
+
 
 
 

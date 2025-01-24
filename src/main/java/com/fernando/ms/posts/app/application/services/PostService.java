@@ -1,10 +1,12 @@
 package com.fernando.ms.posts.app.application.services;
 
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.application.ports.output.ExternalFollowerOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
+import com.fernando.ms.posts.app.domain.models.Follower;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +14,14 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class PostService implements PostInputPort {
     private final PostPersistencePort postPersistencePort;
     private final ExternalUserOutputPort externalUserOutputPort;
+    private final ExternalFollowerOutputPort externalFollowerOutputPort;
 
     @Override
     public Flux<Post> findAll() {
@@ -81,5 +86,25 @@ public class PostService implements PostInputPort {
                            });
                });
 
+    }
+
+    @Override
+    public Flux<Post> findAllPostRecent(Long followerId, Long size, Long page) {
+        return externalFollowerOutputPort.findFollowedByFollower(followerId, page, size)
+                .map(followed -> User.builder().id(followed.getFollowed()).build())
+                .collectList()
+                .flatMapMany(followedList ->
+                        postPersistencePort.findAllPostRecent(followedList,size,page)
+                                .flatMap(post ->
+                                        externalUserOutputPort.findById(post.getUser().getId())
+                                                .map(user -> {
+                                                    post.setUser(user);
+                                                    return post;
+                                                })
+                                                .onErrorResume(e -> {
+                                                    return Mono.just(post);
+                                                })
+                                )
+                );
     }
 }
