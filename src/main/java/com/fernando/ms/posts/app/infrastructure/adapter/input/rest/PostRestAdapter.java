@@ -7,6 +7,8 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -70,6 +72,14 @@ public class PostRestAdapter {
                .flatMap(exists->{
                    return Mono.just(ResponseEntity.ok().body(postRestMapper.toExistsPostResponse(exists)));
                });
+    }
+
+
+    @GetMapping("/{userId}/me")
+    public Flux<PostUserResponse> findAllByPost(@PathVariable("userId") Long userId,
+                                                @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
+                                                @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
+        return postRestMapper.toPostsUserResponse(postInputPort.findAllPostMe(userId,size,page));
     }
 
 }

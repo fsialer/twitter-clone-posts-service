@@ -1,10 +1,13 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence;
 
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostPersistenceMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.repository.PostReactiveMongoRepository;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
+import com.fernando.ms.posts.app.utils.TestUtilsUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,6 +109,32 @@ public class PostPersistenceAdapterTest {
                 .verifyComplete();
 
         Mockito.verify(postReactiveMongoRepository, times(1)).existsById(anyString());
+    }
+
+
+    @Test
+    @DisplayName("When User Exists Expect List of Posts")
+    void When_UserExists_Expect_ListOfPosts() {
+        Post post = TestUtilPost.buildPostMock();
+        PostDocument postDocument = TestUtilPost.buildPostDocumentMock();
+        User user = TestUtilsUser.buildUserMock();
+        PostUser postUser = PostUser.builder().userId(user.getId()).build();
+
+        when(postReactiveMongoRepository.findAllUserAndPageAndSize(any(PostUser.class), anyLong(), anyLong()))
+                .thenReturn(Flux.just(postDocument));
+        when(postPersistenceMapper.toPosts(any(Flux.class))).thenReturn(Flux.just(post));
+        when(postPersistenceMapper.toPostUser(any(User.class))).thenReturn(postUser);
+
+        Flux<Post> result = postPersistenceAdapter.findAllPostMe(user, 10L, 0L);
+
+        StepVerifier.create(result)
+                .expectNext(post)
+                .verifyComplete();
+
+        Mockito.verify(postReactiveMongoRepository, Mockito.times(1))
+                .findAllUserAndPageAndSize(any(PostUser.class), anyLong(), anyLong());
+        Mockito.verify(postPersistenceMapper, Mockito.times(1)).toPosts(any(Flux.class));
+        Mockito.verify(postPersistenceMapper, Mockito.times(1)).toPostUser(any(User.class));
     }
 
 }

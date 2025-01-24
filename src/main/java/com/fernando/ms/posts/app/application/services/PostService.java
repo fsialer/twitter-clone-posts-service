@@ -6,6 +6,7 @@ import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.domain.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -66,5 +67,19 @@ public class PostService implements PostInputPort {
     @Override
     public Mono<Boolean> verify(String id) {
         return postPersistencePort.verify(id);
+    }
+
+    @Override
+    public Flux<Post> findAllPostMe(Long userId, Long size, Long page) {
+        User user= User.builder().id(userId).build();
+       return postPersistencePort.findAllPostMe(user,size,page)
+               .flatMap(post->{
+                   return externalUserOutputPort.findById(userId)
+                           .map(user1 -> {
+                               post.setUser(user1);
+                               return post;
+                           });
+               });
+
     }
 }

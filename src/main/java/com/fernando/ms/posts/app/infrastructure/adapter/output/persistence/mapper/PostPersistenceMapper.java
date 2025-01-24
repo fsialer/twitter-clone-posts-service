@@ -1,7 +1,9 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper;
 
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import reactor.core.publisher.Flux;
@@ -36,6 +38,16 @@ public interface PostPersistenceMapper {
 
     default LocalDateTime mapUpdatedAt(){
         return LocalDateTime.now();
+    }
+
+
+    User toUser(PostUser postUser);
+
+
+    default PostUser toPostUser(User user){
+        return PostUser.builder()
+                .userId(user.getId())
+                .build();
     }
 
 }

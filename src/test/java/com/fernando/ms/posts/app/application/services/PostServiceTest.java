@@ -5,7 +5,9 @@ import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
+import com.fernando.ms.posts.app.utils.TestUtilsUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -188,6 +191,28 @@ public class PostServiceTest {
 
         Mockito.verify(postPersistencePort, times(1)).verify(anyString());
     }
+
+
+    @Test
+    @DisplayName("When Post User Exists Expect List of Posts")
+    void When_PostUserExists_Expect_ListOfPosts() {
+        Post post = TestUtilPost.buildPostMock();
+        User user = TestUtilsUser.buildUserMock();
+
+        when(externalUserOutputPort.findById(anyLong())).thenReturn(Mono.just(user));
+        when(postPersistencePort.findAllPostMe(any(User.class), anyLong(), anyLong())).thenReturn(Flux.just(post));
+
+        Flux<Post> posts = postService.findAllPostMe(1L, 10L, 0L);
+
+        StepVerifier.create(posts)
+                .expectNext(post)
+                .verifyComplete();
+
+        Mockito.verify(externalUserOutputPort, Mockito.times(1)).findById(anyLong());
+        Mockito.verify(postPersistencePort, Mockito.times(1)).findAllPostMe(any(User.class), anyLong(), anyLong());
+    }
+
+
 
 
 }

@@ -2,6 +2,7 @@ package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence;
 
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostPersistenceMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
@@ -48,5 +49,15 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     @Override
     public Mono<Boolean> verify(String id) {
         return postReactiveMongoRepository.existsById(id);
+    }
+
+    @Override
+    public Flux<Post> findAllPostMe(User user) {
+        return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAllByPostUserOrderByDatePostDesc(postPersistenceMapper.toPostUser(user)));
+    }
+
+    @Override
+    public Flux<Post> findAllPostMe(User user, Long size, Long page) {
+        return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAllUserAndPageAndSize(postPersistenceMapper.toPostUser(user),size,page));
     }
 }

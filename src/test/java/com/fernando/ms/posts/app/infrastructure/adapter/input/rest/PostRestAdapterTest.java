@@ -9,6 +9,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -170,6 +171,25 @@ public class PostRestAdapterTest {
 
         Mockito.verify(postInputPort, times(1)).verify(anyString());
         Mockito.verify(postRestMapper, times(1)).toExistsPostResponse(anyBoolean());
+    }
+
+    @Test
+    @DisplayName("When User Posts Exist Expect List of User Posts")
+    void When_UserPostsExist_Expect_ListOfUserPosts() {
+        PostUserResponse postUserResponse = TestUtilPost.buildPostUserResponseMock();
+
+        when(postInputPort.findAllPostMe(anyLong(), anyLong(), anyLong())).thenReturn(Flux.just(TestUtilPost.buildPostMock()));
+        when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
+
+        webTestClient.get()
+                .uri("/posts/{userId}/me?size=10&page=0", 1L)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].content").isEqualTo("Hello everybody");
+
+        Mockito.verify(postInputPort, Mockito.times(1)).findAllPostMe(anyLong(), anyLong(), anyLong());
+        Mockito.verify(postRestMapper, Mockito.times(1)).toPostsUserResponse(any(Flux.class));
     }
 
 
