@@ -90,7 +90,7 @@ public class PostService implements PostInputPort {
 
     @Override
     public Flux<Post> findAllPostRecent(Long followerId, Long size, Long page) {
-        return externalFollowerOutputPort.findFollowedByFollower(followerId, page, size)
+        return externalFollowerOutputPort.findFollowedByFollower(followerId)
                 .map(followed -> User.builder().id(followed.getFollowed()).build())
                 .collectList()
                 .flatMapMany(followedList ->

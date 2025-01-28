@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VerifyUserResponse {
+public class ExistsUserResponse {
     private Boolean exists;
 }

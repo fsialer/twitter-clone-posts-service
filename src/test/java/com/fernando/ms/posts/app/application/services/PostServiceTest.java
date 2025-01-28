@@ -227,7 +227,7 @@ public class PostServiceTest {
                 .build();
         User user = TestUtilsUser.buildUserMock();
 
-        when(externalFollowerOutputPort.findFollowedByFollower(anyLong(), anyLong(), anyLong()))
+        when(externalFollowerOutputPort.findFollowedByFollower(anyLong()))
                 .thenReturn(Flux.just(follower));
         when(postPersistencePort.findAllPostRecent(anyList(), anyLong(), anyLong()))
                 .thenReturn(Flux.just(post));
@@ -240,7 +240,7 @@ public class PostServiceTest {
                 .expectNextMatches(p -> p.getUser().getId().equals(user.getId()))
                 .verifyComplete();
 
-        Mockito.verify(externalFollowerOutputPort, times(1)).findFollowedByFollower(anyLong(), anyLong(), anyLong());
+        Mockito.verify(externalFollowerOutputPort, times(1)).findFollowedByFollower(anyLong());
         Mockito.verify(postPersistencePort, times(1)).findAllPostRecent(anyList(), anyLong(), anyLong());
         Mockito.verify(externalUserOutputPort, times(1)).findById(anyLong());
     }
