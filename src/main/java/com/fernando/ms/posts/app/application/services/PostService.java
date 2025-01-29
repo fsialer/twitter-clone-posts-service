@@ -9,6 +9,7 @@ import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Follower;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.bus.PostBusAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -22,6 +23,7 @@ public class PostService implements PostInputPort {
     private final PostPersistencePort postPersistencePort;
     private final ExternalUserOutputPort externalUserOutputPort;
     private final ExternalFollowerOutputPort externalFollowerOutputPort;
+    private final PostBusAdapter postBusAdapter;
 
     @Override
     public Flux<Post> findAll() {
@@ -40,7 +42,8 @@ public class PostService implements PostInputPort {
                     if(Boolean.FALSE.equals(exist)){
                         return Mono.error(new UserNotFoundException());
                     }
-                    return postPersistencePort.save(post);
+                    return postPersistencePort.save(post)
+                            .doOnSuccess(postBusAdapter::sendNotification);
                 });
     }
 

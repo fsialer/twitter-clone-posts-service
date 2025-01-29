@@ -8,7 +8,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/tc_posts_db
-follower-service:
+followers-service:
   url: ${FOLLOWER_URL:http://localhost:8084/followers}
-user-service:
+users-service:
   url: ${USER_URL:http://localhost:8080/users}
+service-bus:
+  connection-string: ${CONNECTION_SEND_NOTIFICATION_POST}
+  topic-name: send-notifications
+  #queue-name: ${SB_QUEUE_NAME}

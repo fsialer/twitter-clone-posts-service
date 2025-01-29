@@ -8,9 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
-    @Value("${user-service.url}")
+    @Value("${users-service.url}")
     private String apiUser;
-    @Value("${follower-service.url}")
+    @Value("${followers-service.url}")
     private String apiFollower;
     @Bean
     public WebClient webClientUser(WebClient.Builder builder) {
