@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,10 +32,10 @@ public class PostRestAdapterTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @MockBean
+    @MockitoBean
     private PostInputPort postInputPort;
 
-    @MockBean
+    @MockitoBean
     private PostRestMapper postRestMapper;
 
     @Autowired
@@ -85,7 +85,7 @@ public class PostRestAdapterTest {
         Post post = TestUtilPost.buildPostMock();
         PostResponse postResponse = TestUtilPost.buildPostResponseMock();
 
-        when(postRestMapper.toPost(any(CreatePostRequest.class))).thenReturn(post);
+        when(postRestMapper.toPost(anyLong(),any(CreatePostRequest.class))).thenReturn(post);
         when(postInputPort.save(any(Post.class))).thenReturn(Mono.just(post));
         when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
 
@@ -97,7 +97,7 @@ public class PostRestAdapterTest {
                 .expectBody()
                 .jsonPath("$.content").isEqualTo("Hello everybody");
 
-        Mockito.verify(postRestMapper, times(1)).toPost(any(CreatePostRequest.class));
+        Mockito.verify(postRestMapper, times(1)).toPost(anyLong(),any(CreatePostRequest.class));
         Mockito.verify(postInputPort, times(1)).save(any(Post.class));
         Mockito.verify(postRestMapper, times(1)).toPostResponse(any(Post.class));
     }

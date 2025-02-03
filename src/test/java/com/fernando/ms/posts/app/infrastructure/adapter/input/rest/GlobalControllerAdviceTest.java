@@ -14,8 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -25,10 +25,10 @@ import static org.mockito.Mockito.when;
 
 @WebFluxTest(controllers = {PostRestAdapter.class})
 public class GlobalControllerAdviceTest {
-    @MockBean
+    @MockitoBean
     private PostRestMapper postRestMapper;
 
-    @MockBean
+    @MockitoBean
     private PostInputPort postInputPort;
 
     @Autowired
@@ -75,7 +75,6 @@ public class GlobalControllerAdviceTest {
     void Expect_WebExchangeBindException_When_UserInformationIsInvalid() throws JsonProcessingException {
         CreatePostRequest createUserRequest= CreatePostRequest.builder()
                 .content("")
-                .userId(1L)
                 .build();
 
         webTestClient.post()
@@ -96,7 +95,7 @@ public class GlobalControllerAdviceTest {
     void Expect_UserNotFoundException_When_UserIdentifierIsInvalid() throws JsonProcessingException {
         CreatePostRequest createUserRequest= TestUtilPost.buildCreatePostRequestMock();
         Post post= TestUtilPost.buildPostMock();
-        when(postRestMapper.toPost(any(CreatePostRequest.class))).thenReturn(post);
+        when(postRestMapper.toPost(anyLong(),any(CreatePostRequest.class))).thenReturn(post);
         when(postInputPort.save(any(Post.class))).thenReturn(Mono.error(new UserNotFoundException()));
 
         webTestClient.post()

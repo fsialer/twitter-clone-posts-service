@@ -8,7 +8,6 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,10 +41,10 @@ public class PostRestAdapter {
 
     @PostMapping
     public Mono<ResponseEntity<PostResponse>> save(
+            @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody  CreatePostRequest rq
     ) {
-
-        return postInputPort.save(postRestMapper.toPost(rq))
+        return postInputPort.save(postRestMapper.toPost(userId,rq))
                 .flatMap(post -> {
                     String location = "/posts/".concat(post.getId());
                     return Mono.just(ResponseEntity.created(URI.create(location)).body(postRestMapper.toPostResponse(post)));

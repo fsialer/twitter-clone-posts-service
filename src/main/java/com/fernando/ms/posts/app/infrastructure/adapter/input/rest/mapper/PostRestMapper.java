@@ -25,12 +25,12 @@ public interface PostRestMapper {
 
     PostResponse toPostResponse(Post post);
 
-    @Mapping(target = "user",expression = "java(mapUser(rq))")
-    Post toPost(CreatePostRequest rq);
+    @Mapping(target = "user",expression = "java(mapUser(userId))")
+    Post toPost(Long userId,CreatePostRequest rq);
 
-    default User mapUser(CreatePostRequest rq){
+    default User mapUser(Long userId){
         return User.builder()
-                .id(rq.getUserId())
+                .id(userId)
                 .build();
     }
 

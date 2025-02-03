@@ -45,7 +45,6 @@ public class TestUtilPost {
 
     public static CreatePostRequest buildCreatePostRequestMock(){
         return CreatePostRequest.builder()
-                .userId(1L)
                 .content("Hello everybody")
                 .build();
     }
