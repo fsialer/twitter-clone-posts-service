@@ -204,7 +204,8 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
 
         webTestClient.get()
-                .uri("/posts/{follower}/recent?size=10&page=0", 1L)
+                .uri("/posts/recent?size=10&page=0", 1L)
+                .header("X-User-Id","1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
