@@ -91,6 +91,7 @@ public class PostRestAdapterTest {
 
         webTestClient.post()
                 .uri("/posts")
+                .header("X-User-Id","1")
                 .bodyValue(createPostRequest)
                 .exchange()
                 .expectStatus().isCreated()
@@ -182,7 +183,8 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
 
         webTestClient.get()
-                .uri("/posts/{userId}/me?size=10&page=0", 1L)
+                .uri("/posts/me?size=10&page=0", 1L)
+                .header("X-User-Id","1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
