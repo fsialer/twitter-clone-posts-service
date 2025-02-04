@@ -51,7 +51,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostsResponse(any(Flux.class))).thenReturn(Flux.just(postResponse));
 
         webTestClient.get()
-                .uri("/posts")
+                .uri("/v1/posts")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -68,7 +68,7 @@ public class PostRestAdapterTest {
         when(postInputPort.findById(anyString())).thenReturn(Mono.just(post));
         when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
         webTestClient.get()
-                .uri("/posts/{id}",1L)
+                .uri("/v1/posts/{id}",1L)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -90,7 +90,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
 
         webTestClient.post()
-                .uri("/posts")
+                .uri("/v1/posts")
                 .header("X-User-Id","1")
                 .bodyValue(createPostRequest)
                 .exchange()
@@ -114,7 +114,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
 
         webTestClient.put()
-                .uri("/posts/{id}","1")
+                .uri("/v1/posts/{id}","1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(objectMapper.writeValueAsString(updatePostRequest))
                 .exchange()
@@ -129,7 +129,7 @@ public class PostRestAdapterTest {
         when(postInputPort.delete(anyString())).thenReturn(Mono.empty());
 
         webTestClient.delete()
-                .uri("/posts/{id}", 1L)
+                .uri("/v1/posts/{id}", 1L)
                 .exchange()
                 .expectStatus().isNoContent();
 
@@ -145,7 +145,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toExistsPostResponse(anyBoolean())).thenReturn(existsPostResponse);
 
         webTestClient.get()
-                .uri("/posts/{id}/verify", 1L)
+                .uri("/v1/posts/{id}/verify", 1L)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -164,7 +164,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toExistsPostResponse(anyBoolean())).thenReturn(existsPostResponse);
 
         webTestClient.get()
-                .uri("/posts/{id}/verify", 1L)
+                .uri("/v1/posts/{id}/verify", 1L)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -183,7 +183,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
 
         webTestClient.get()
-                .uri("/posts/me?size=10&page=0", 1L)
+                .uri("/v1/posts/me?size=10&page=0", 1L)
                 .header("X-User-Id","1")
                 .exchange()
                 .expectStatus().isOk()
@@ -204,7 +204,7 @@ public class PostRestAdapterTest {
         when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
 
         webTestClient.get()
-                .uri("/posts/recent?size=10&page=0", 1L)
+                .uri("/v1/posts/recent?size=10&page=0", 1L)
                 .header("X-User-Id","1")
                 .exchange()
                 .expectStatus().isOk()

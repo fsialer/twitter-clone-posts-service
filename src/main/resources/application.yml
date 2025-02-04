@@ -7,11 +7,13 @@ spring:
     default-property-inclusion: NON_NULL
   data:
     mongodb:
-      uri: mongodb://localhost:27017/tc_posts_db
+      uri: ${DB_HOST:mongodb://localhost:27017/tc_posts_db}
+      username: ${DB_USERNAME:root}
+      password: ${DB_PASSWORD:1234}
 followers-service:
-  url: ${FOLLOWER_URL:http://localhost:8084/followers}
+  url: ${FOLLOWERS_URL:http://localhost:8084/followers}
 users-service:
-  url: ${USER_URL:http://localhost:8080/users}
+  url: ${USERS_URL:http://localhost:8080/users}
 service-bus:
   connection-string: ${CONNECTION_SEND_NOTIFICATION_POST}
   topic-name: send-notifications

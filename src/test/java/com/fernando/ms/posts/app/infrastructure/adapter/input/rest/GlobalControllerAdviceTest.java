@@ -44,7 +44,7 @@ public class GlobalControllerAdviceTest {
         when(postInputPort.findById(anyString())).thenReturn(Mono.error(new PostNotFoundException()));
 
         webTestClient.get()
-                .uri("/posts/{id}","1")
+                .uri("/v1/posts/{id}","1")
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(ErrorResponse.class)
@@ -60,7 +60,7 @@ public class GlobalControllerAdviceTest {
         when(postInputPort.findById(anyString())).thenReturn(Mono.error(new RuntimeException("Unexpected error")));
 
         webTestClient.get()
-                .uri("/posts/1")
+                .uri("/v1/posts/1")
                 .exchange()
                 .expectStatus().is5xxServerError()
                 .expectBody(ErrorResponse.class)
@@ -78,7 +78,7 @@ public class GlobalControllerAdviceTest {
                 .build();
 
         webTestClient.post()
-                .uri("/posts")
+                .uri("/v1/posts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(objectMapper.writeValueAsString(createUserRequest))
                 .exchange()
@@ -99,7 +99,7 @@ public class GlobalControllerAdviceTest {
         when(postInputPort.save(any(Post.class))).thenReturn(Mono.error(new UserNotFoundException()));
 
         webTestClient.post()
-                .uri("/posts")
+                .uri("/v1/posts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(objectMapper.writeValueAsString(createUserRequest))
                 .exchange()

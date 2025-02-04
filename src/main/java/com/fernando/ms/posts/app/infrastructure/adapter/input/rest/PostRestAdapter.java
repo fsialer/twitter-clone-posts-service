@@ -20,7 +20,7 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts")
+@RequestMapping("/v1/posts")
 public class PostRestAdapter {
    private final PostInputPort postInputPort;
    private final PostRestMapper postRestMapper;
