@@ -15,6 +15,6 @@ followers-service:
 users-service:
   url: ${USERS_URL:http://localhost:8080/users}
 service-bus:
-  connection-string: ${CONNECTION_SEND_NOTIFICATION_POST}
+  connection-string: ${CONNECTION_SEND_NOTIFICATION}
   topic-name: send-notifications
   #queue-name: ${SB_QUEUE_NAME}
