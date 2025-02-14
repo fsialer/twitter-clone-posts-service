@@ -11,10 +11,10 @@ spring:
       username: ${DB_USERNAME:root}
       password: ${DB_PASSWORD:1234}
 followers-service:
-  url: ${FOLLOWERS_URL:http://localhost:8084/followers}
+  url: ${FOLLOWERS_URL:http://localhost:8084/v1/followers}
 users-service:
-  url: ${USERS_URL:http://localhost:8080/users}
+  url: ${USERS_URL:http://localhost:8080/v1/users}
 service-bus:
-  connection-string: ${CONNECTION_SEND_NOTIFICATION}
+  connection-string: ${CONNECTION_SEND_NOTIFICATION:service-bus}
   topic-name: send-notifications
   #queue-name: ${SB_QUEUE_NAME}

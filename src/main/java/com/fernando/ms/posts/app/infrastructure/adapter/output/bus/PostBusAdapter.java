@@ -13,27 +13,27 @@ import org.springframework.stereotype.Component;
 @Component
 //@RequiredArgsConstructor
 public class PostBusAdapter implements PostBusOutputPort {
-//    private final ServiceBusSenderClient sender;
-//    private final ObjectMapper objectMapper;
-//
-//    public PostBusAdapter(ServiceBusSenderClient sender, ObjectMapper objectMapper) {
-//        this.sender = sender;
-//        this.objectMapper = objectMapper;
-//    }
+    private final ServiceBusSenderClient sender;
+    private final ObjectMapper objectMapper;
+
+    public PostBusAdapter(ServiceBusSenderClient sender, ObjectMapper objectMapper) {
+        this.sender = sender;
+        this.objectMapper = objectMapper;
+    }
     @Override
     public void sendNotification(Post post) {
-//        try{
-//            CreateMessageRequest createMessageRequest= CreateMessageRequest.builder()
-//                    .userId(post.getUser().getId())
-//                    .content(post.getContent())
-//                    .datePost(post.getDatePost().toString())
-//                    .targetId(post.getId())
-//                    .targetType("POST")
-//                    .build();
-//            String messageContent = this.objectMapper.writeValueAsString(createMessageRequest);
-//            sender.sendMessage(new ServiceBusMessage(messageContent));
-//        }catch (RuntimeException | JsonProcessingException ex){
-//            throw new RuntimeException(ex);
-//        }
+        try{
+            CreateMessageRequest createMessageRequest= CreateMessageRequest.builder()
+                    .userId(post.getUser().getId())
+                    .content(post.getContent())
+                    .datePost(post.getDatePost().toString())
+                    .targetId(post.getId())
+                    .targetType("POST")
+                    .build();
+            String messageContent = this.objectMapper.writeValueAsString(createMessageRequest);
+            sender.sendMessage(new ServiceBusMessage(messageContent));
+        }catch (RuntimeException | JsonProcessingException ex){
+            throw new RuntimeException(ex);
+        }
     }
 }

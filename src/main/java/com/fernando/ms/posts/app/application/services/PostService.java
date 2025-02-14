@@ -42,6 +42,7 @@ public class PostService implements PostInputPort {
                     if(Boolean.FALSE.equals(exist)){
                         return Mono.error(new UserNotFoundException());
                     }
+                    System.out.println(post.getUser().getId());
                     return postPersistencePort.save(post)
                             .doOnSuccess(postBusAdapter::sendNotification);
                 });

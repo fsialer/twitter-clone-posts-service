@@ -44,9 +44,10 @@ public class PostRestAdapter {
             @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody  CreatePostRequest rq
     ) {
-        return postInputPort.save(postRestMapper.toPost(userId,rq))
+
+        return postInputPort.save(postRestMapper.toPost(Long.valueOf(userId),rq))
                 .flatMap(post -> {
-                    String location = "/posts/".concat(post.getId());
+                    String location = "/v1/posts/".concat(post.getId());
                     return Mono.just(ResponseEntity.created(URI.create(location)).body(postRestMapper.toPostResponse(post)));
                 });
     }
