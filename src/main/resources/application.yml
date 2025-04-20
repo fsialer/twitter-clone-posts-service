@@ -10,6 +10,11 @@ spring:
       uri: ${DB_HOST:mongodb://localhost:27017/tc_posts_db}
       username: ${DB_USERNAME:root}
       password: ${DB_PASSWORD:1234}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics
 followers-service:
   url: ${FOLLOWERS_URL:http://localhost:8084/v1/followers}
 users-service:
