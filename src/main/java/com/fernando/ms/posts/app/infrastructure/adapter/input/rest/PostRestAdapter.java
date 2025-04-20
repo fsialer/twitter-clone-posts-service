@@ -1,8 +1,10 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
@@ -22,8 +24,9 @@ import java.net.URI;
 @RequestMapping("/v1/posts")
 public class PostRestAdapter {
    private final PostInputPort postInputPort;
+   private final PostDataInputPort postDataInputPort;
    private final PostRestMapper postRestMapper;
-   private final ObjectMapper objectMapper;
+   private final PostDataRestMapper postDataRestMapper;
 
    @GetMapping
     public Flux<PostResponse> findAll(){
@@ -33,9 +36,7 @@ public class PostRestAdapter {
     @GetMapping("/{id}")
     public Mono<ResponseEntity<PostResponse>> findById(@PathVariable String id){
         return postInputPort.findById(id)
-                .flatMap(post->{
-                    return Mono.just(ResponseEntity.ok(postRestMapper.toPostResponse(post)));
-                });
+                .flatMap(post-> Mono.just(ResponseEntity.ok(postRestMapper.toPostResponse(post))));
     }
 
     @PostMapping
@@ -54,9 +55,7 @@ public class PostRestAdapter {
     @PutMapping("/{id}")
     public Mono<ResponseEntity<PostResponse>> update(@PathVariable("id") String id,@Valid @RequestBody UpdatePostRequest rq){
        return postInputPort.update(id,postRestMapper.toPost(rq))
-               .flatMap(post->{
-                   return Mono.just(ResponseEntity.ok().body(postRestMapper.toPostResponse(post)));
-               });
+               .flatMap(post-> Mono.just(ResponseEntity.ok().body(postRestMapper.toPostResponse(post))));
     }
 
     @DeleteMapping("/{id}")
@@ -68,24 +67,16 @@ public class PostRestAdapter {
     @GetMapping("/{id}/verify")
     public Mono<ResponseEntity<ExistsPostResponse>> verify(@PathVariable("id") String id){
        return postInputPort.verify(id)
-               .flatMap(exists->{
-                   return Mono.just(ResponseEntity.ok().body(postRestMapper.toExistsPostResponse(exists)));
-               });
+               .flatMap(exists->Mono.just(ResponseEntity.ok().body(postRestMapper.toExistsPostResponse(exists))));
     }
 
-
-//    @GetMapping("/me")
-//    public Flux<PostUserResponse> findAllByPost(@RequestHeader("X-User-Id") Long userId,
-//                                                @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
-//                                                @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
-//        return postRestMapper.toPostsUserResponse(postInputPort.findAllPostMe(userId,size,page));
-//    }
-//
-//    @GetMapping("/recent")
-//    public Flux<PostUserResponse> findAllPostRecent(@RequestHeader("X-User-Id") Long userId,
-//                                                    @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
-//                                                    @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
-//       return postRestMapper.toPostsUserResponse(postInputPort.findAllPostRecent(userId,size,page));
-//    }
+    @PostMapping("/data")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> saveData(
+            @RequestHeader("X-User-Id") String userId,
+            @Valid @RequestBody CreatePostDataRequest rq
+    ) {
+        return postDataInputPort.save(postDataRestMapper.toPostData(userId,rq));
+    }
 
 }

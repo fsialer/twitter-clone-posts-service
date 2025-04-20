@@ -2,14 +2,19 @@ package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
+import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +41,12 @@ public class GlobalControllerAdviceTest {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    @MockitoBean
+    private PostDataRestMapper postDataRestMapper;
+
+    @MockitoBean
+    private PostDataInputPort postDataInputPort;
 
     @Test
     @DisplayName("Expect PostNotFoundException When Post Identifier Is Invalid")
@@ -109,6 +120,27 @@ public class GlobalControllerAdviceTest {
                 .value(response -> {
                     assert response.getCode().equals(USER_NOT_FOUND.getCode());
                     assert response.getMessage().equals(USER_NOT_FOUND.getMessage());
+                });
+    }
+
+    @Test
+    @DisplayName("Expect PostRuleException When PostData Is Invalid")
+    void Expect_PostRuleException_When_PostDataIsInvalid() throws JsonProcessingException {
+        CreatePostDataRequest createPostDataRequest = TestUtilPostData.buildCreatePostDataRequestMock();
+        when(postDataRestMapper.toPostData(any(String.class), any(CreatePostDataRequest.class)))
+                .thenReturn(TestUtilPostData.buildPostDataMock());
+        when(postDataInputPort.save(any())).thenReturn(Mono.error(new PostRuleException("PostData already exists")));
+        webTestClient.post()
+                .uri("/v1/posts/data")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-User-Id","1")
+                .bodyValue(objectMapper.writeValueAsString(createPostDataRequest))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assert response.getCode().equals(POST_RULE_EXCEPTION.getCode());
+                    assert response.getMessage().equals(POST_RULE_EXCEPTION.getMessage());
                 });
     }
 

@@ -2,15 +2,19 @@ package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
+import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,7 +40,14 @@ public class PostRestAdapterTest {
     private PostInputPort postInputPort;
 
     @MockitoBean
+    private PostDataInputPort postDataInputPort;
+
+
+    @MockitoBean
     private PostRestMapper postRestMapper;
+
+    @MockitoBean
+    private PostDataRestMapper postDataRestMapper;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -172,5 +183,23 @@ public class PostRestAdapterTest {
 
         Mockito.verify(postInputPort, times(1)).verify(anyString());
         Mockito.verify(postRestMapper, times(1)).toExistsPostResponse(anyBoolean());
+    }
+
+    @Test
+    @DisplayName("when PostData Is Valid Expect Save Data Successfully")
+    void when_PostDataIsValid_Expect_SaveDataSuccessfully() {
+        CreatePostDataRequest createPostDataRequest = TestUtilPostData.buildCreatePostDataRequestMock();
+        when(postDataRestMapper.toPostData(any(String.class), any(CreatePostDataRequest.class)))
+                .thenReturn(TestUtilPostData.buildPostDataMock());
+        when(postDataInputPort.save(any())).thenReturn(Mono.empty());
+        webTestClient.post()
+                .uri("/v1/posts/data")
+                .header("X-User-Id", "1")
+                .bodyValue(createPostDataRequest)
+                .exchange()
+                .expectStatus().isNoContent();
+        Mockito.verify(postDataRestMapper, times(1))
+                .toPostData(any(String.class), any(CreatePostDataRequest.class));
+        Mockito.verify(postDataInputPort, times(1)).save(any());
     }
 }

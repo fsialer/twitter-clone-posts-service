@@ -1,6 +1,7 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,19 @@ public class GlobalControllerAdvice {
                 .details(bindingResult.getFieldErrors().stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
                         .toList())
+                .timestamp(LocalDate.now().toString())
+                .build());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PostRuleException.class)
+    public Mono<ErrorResponse> handlePostRuleException(
+            PostRuleException e) {
+        return Mono.just(ErrorResponse.builder()
+                .code(POST_RULE_EXCEPTION.getCode())
+                .type(FUNCTIONAL)
+                .message(POST_RULE_EXCEPTION.getMessage())
+                .details(Collections.singletonList(e.getMessage()))
                 .timestamp(LocalDate.now().toString())
                 .build());
     }
