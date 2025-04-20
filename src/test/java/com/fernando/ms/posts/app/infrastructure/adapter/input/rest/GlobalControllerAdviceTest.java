@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
@@ -17,6 +18,7 @@ import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
@@ -26,6 +28,7 @@ import reactor.core.publisher.Mono;
 
 import static com.fernando.ms.posts.app.infrastructure.utils.ErrorCatalog.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(controllers = {PostRestAdapter.class})
@@ -142,6 +145,25 @@ public class GlobalControllerAdviceTest {
                     assert response.getCode().equals(POST_RULE_EXCEPTION.getCode());
                     assert response.getMessage().equals(POST_RULE_EXCEPTION.getMessage());
                 });
+    }
+
+    @Test
+    @DisplayName("Expect PostDataNotFoundException When PostData Identifier Is Invalid")
+    void Expect_PostDataNotFoundException_When_PostDataIdentifierIsInvalid() {
+        String postDataId = "postDataId123";
+        when(postDataInputPort.delete(anyString())).thenReturn(Mono.error(PostDataNotFoundException::new));
+        webTestClient.delete()
+                .uri("/v1/posts/data/{id}", postDataId)
+                .header("X-User-Id", "1")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assert response.getCode().equals(POST_DATA_NOT_FOUND.getCode());
+                    assert response.getMessage().equals(POST_DATA_NOT_FOUND.getMessage());
+                });
+
+        Mockito.verify(postDataInputPort, times(1)).delete(postDataId);
     }
 
 

@@ -20,7 +20,17 @@ public class PostDataPersistenceAdapter implements PostDataPersistencePort {
     }
 
     @Override
+    public Mono<PostData> findById(String id) {
+        return postDataPersistenceMapper.toPostData(postDataRepository.findById(id));
+    }
+
+    @Override
     public Mono<Boolean> verifyPostData(String postId,String userId) {
         return postDataRepository.existsByPostIdAndUserId(postId,userId);
+    }
+
+    @Override
+    public Mono<Void> delete(String id) {
+        return postDataRepository.deleteById(id).then();
     }
 }

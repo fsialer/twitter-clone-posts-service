@@ -2,6 +2,7 @@ package com.fernando.ms.posts.app.application.services;
 
 import com.fernando.ms.posts.app.application.ports.output.PostDataPersistencePort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
+import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
 import com.fernando.ms.posts.app.domain.models.Post;
@@ -81,6 +82,40 @@ public class PostDataServiceTest {
         Mockito.verify(postDataPersistencePort,never()).save(any(PostData.class));
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
         Mockito.verify(postDataPersistencePort,times(1)).verifyPostData(anyString(),anyString());
+    }
+
+    @Test
+    @DisplayName("when PostExists Expect Delete Successfully")
+    void when_PostExists_Expect_DeleteSuccessfully() {
+
+        String postId = "postId123";
+        PostData postData = TestUtilPostData.buildPostDataMock();
+
+        when(postDataPersistencePort.findById(postId)).thenReturn(Mono.just(postData));
+        when(postDataPersistencePort.delete(postId)).thenReturn(Mono.empty());
+
+        Mono<Void> result = postDataService.delete(postId);
+
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        verify(postDataPersistencePort, times(1)).findById(postId);
+        verify(postDataPersistencePort, times(1)).delete(postId);
+    }
+
+    @Test
+    @DisplayName("Expect PostNotFoundException When Post Does Not Exist")
+    void Expect_PostNotFoundException_When_PostDoesNotExist() {
+        String postId = "postId123";
+        when(postDataPersistencePort.findById(postId)).thenReturn(Mono.empty());
+        Mono<Void> result = postDataService.delete(postId);
+
+        StepVerifier.create(result)
+                .expectError(PostDataNotFoundException.class)
+                .verify();
+
+        verify(postDataPersistencePort, times(1)).findById(postId);
+        verify(postDataPersistencePort, never()).delete(postId);
     }
 
 }

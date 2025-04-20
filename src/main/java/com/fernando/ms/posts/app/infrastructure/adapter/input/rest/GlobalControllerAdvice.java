@@ -1,5 +1,6 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
+import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
 import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
@@ -34,6 +35,17 @@ public class GlobalControllerAdvice {
                 .code(POST_NOT_FOUND.getCode())
                 .type(FUNCTIONAL)
                 .message(POST_NOT_FOUND.getMessage())
+                .timestamp(LocalDate.now().toString())
+                .build());
+    }
+
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(PostDataNotFoundException.class)
+    public Mono<ErrorResponse> handlePostDataNotFoundException() {
+        return Mono.just(ErrorResponse.builder()
+                .code(POST_DATA_NOT_FOUND.getCode())
+                .type(FUNCTIONAL)
+                .message(POST_DATA_NOT_FOUND.getMessage())
                 .timestamp(LocalDate.now().toString())
                 .build());
     }

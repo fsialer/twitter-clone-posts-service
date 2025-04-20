@@ -79,4 +79,13 @@ public class PostRestAdapter {
         return postDataInputPort.save(postDataRestMapper.toPostData(userId,rq));
     }
 
+    @DeleteMapping("/data/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteData(
+            @RequestHeader("X-User-Id") String userId,
+            @PathVariable String id
+    ) {
+        return postDataInputPort.delete(id);
+    }
+
 }

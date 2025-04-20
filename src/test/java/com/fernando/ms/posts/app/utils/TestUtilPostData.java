@@ -14,7 +14,7 @@ public class TestUtilPostData {
                 .build();
     }
 
-    public static PostDataDocument buildPostDataDocumentock(){
+    public static PostDataDocument buildPostDataDocumentMock(){
         return PostDataDocument.builder()
                 .id("1")
                 .postId("68045526dffe6e2de223e55b")

@@ -5,5 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface PostDataPersistencePort {
     Mono<Void> save(PostData postData);
+    Mono<PostData> findById(String id);
     Mono<Boolean> verifyPostData(String postId,String userId);
+    Mono<Void> delete(String id);
 }

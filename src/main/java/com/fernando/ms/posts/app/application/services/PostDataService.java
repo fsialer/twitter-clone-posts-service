@@ -3,6 +3,7 @@ package com.fernando.ms.posts.app.application.services;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostDataPersistencePort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
+import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
 import com.fernando.ms.posts.app.domain.models.PostData;
@@ -23,5 +24,12 @@ public class PostDataService implements PostDataInputPort {
                                     .filter(Boolean.FALSE::equals)
                                     .switchIfEmpty(Mono.error(new PostRuleException("PostData already exists")))
                                     .flatMap(verify->postDataPersistencePort.save(postData)));
+    }
+
+    @Override
+    public Mono<Void> delete(String id) {
+        return postDataPersistencePort.findById(id)
+                .switchIfEmpty(Mono.error(PostDataNotFoundException::new))
+                .flatMap(postData->postDataPersistencePort.delete(id));
     }
 }
