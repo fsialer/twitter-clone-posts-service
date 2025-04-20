@@ -40,7 +40,6 @@ public class GlobalControllerAdviceTest {
     @Test
     @DisplayName("Expect PostNotFoundException When Post Identifier Is Invalid")
     void Expect_PostNotFoundException_When_UserIdentifierIsInvalid() {
-        //when(postRestAdapter.findById(anyString())).thenReturn(Mono.error(new PostNotFoundException()));
         when(postInputPort.findById(anyString())).thenReturn(Mono.error(new PostNotFoundException()));
 
         webTestClient.get()
@@ -80,6 +79,7 @@ public class GlobalControllerAdviceTest {
         webTestClient.post()
                 .uri("/v1/posts")
                 .contentType(MediaType.APPLICATION_JSON)
+                .header("X-User-Id","1")
                 .bodyValue(objectMapper.writeValueAsString(createUserRequest))
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -101,6 +101,7 @@ public class GlobalControllerAdviceTest {
         webTestClient.post()
                 .uri("/v1/posts")
                 .contentType(MediaType.APPLICATION_JSON)
+                .header("X-User-Id","1")
                 .bodyValue(objectMapper.writeValueAsString(createUserRequest))
                 .exchange()
                 .expectStatus().isNotFound()

@@ -2,9 +2,7 @@ package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence;
 
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.models.Post;
-import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostPersistenceMapper;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.repository.PostReactiveMongoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

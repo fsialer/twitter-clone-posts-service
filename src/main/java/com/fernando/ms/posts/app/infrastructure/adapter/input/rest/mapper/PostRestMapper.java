@@ -1,15 +1,11 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper;
 
 import com.fernando.ms.posts.app.domain.models.Post;
-import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.UserResponse;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

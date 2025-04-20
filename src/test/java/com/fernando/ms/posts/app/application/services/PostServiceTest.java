@@ -28,12 +28,6 @@ class PostServiceTest {
     private PostService postService;
 
     @Mock
-    private ExternalUserOutputPort externalUserOutputPort;
-
-    @Mock
-    private ExternalFollowerOutputPort externalFollowerOutputPort;
-
-    @Mock
     private PostBusAdapter postBusAdapter;
 
     @Test

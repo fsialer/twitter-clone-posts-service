@@ -1,7 +1,6 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper;
 
 import com.fernando.ms.posts.app.domain.models.Post;
-import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,8 +8,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PostPersistenceMapper {
