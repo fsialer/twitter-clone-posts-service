@@ -9,7 +9,6 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.respon
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.UserResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +19,7 @@ public class TestUtilPost {
                 .id("1")
                 .content("Hello everybody")
                 .datePost(LocalDateTime.now())
-                .user(User.builder().id(1L).build())
+                .userId("fdsfds4544")
                 .build();
     }
 
@@ -31,7 +30,7 @@ public class TestUtilPost {
                 .datePost(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .postUser(PostUser.builder().userId(1L).build())
+                .userId("fdsfds4544")
                 .build();
     }
 
@@ -72,14 +71,4 @@ public class TestUtilPost {
                         .build())
                 .build();
     }
-
-    public static PostUser buildPostUserMock(){
-        return PostUser.builder()
-                .userId(1L)
-                .build();
-    }
-
-
-
-
 }

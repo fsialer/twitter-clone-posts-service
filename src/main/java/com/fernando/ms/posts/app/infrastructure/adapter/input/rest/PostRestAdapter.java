@@ -7,7 +7,6 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,11 +40,11 @@ public class PostRestAdapter {
 
     @PostMapping
     public Mono<ResponseEntity<PostResponse>> save(
-            @RequestHeader("X-User-Id") Long userId,
+            @RequestHeader("X-User-Id") String userId,
             @Valid @RequestBody  CreatePostRequest rq
     ) {
 
-        return postInputPort.save(postRestMapper.toPost(Long.valueOf(userId),rq))
+        return postInputPort.save(postRestMapper.toPost(userId,rq))
                 .flatMap(post -> {
                     String location = "/v1/posts/".concat(post.getId());
                     return Mono.just(ResponseEntity.created(URI.create(location)).body(postRestMapper.toPostResponse(post)));
@@ -75,18 +74,18 @@ public class PostRestAdapter {
     }
 
 
-    @GetMapping("/me")
-    public Flux<PostUserResponse> findAllByPost(@RequestHeader("X-User-Id") Long userId,
-                                                @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
-                                                @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
-        return postRestMapper.toPostsUserResponse(postInputPort.findAllPostMe(userId,size,page));
-    }
-
-    @GetMapping("/recent")
-    public Flux<PostUserResponse> findAllPostRecent(@RequestHeader("X-User-Id") Long userId,
-                                                    @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
-                                                    @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
-       return postRestMapper.toPostsUserResponse(postInputPort.findAllPostRecent(userId,size,page));
-    }
+//    @GetMapping("/me")
+//    public Flux<PostUserResponse> findAllByPost(@RequestHeader("X-User-Id") Long userId,
+//                                                @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
+//                                                @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
+//        return postRestMapper.toPostsUserResponse(postInputPort.findAllPostMe(userId,size,page));
+//    }
+//
+//    @GetMapping("/recent")
+//    public Flux<PostUserResponse> findAllPostRecent(@RequestHeader("X-User-Id") Long userId,
+//                                                    @RequestParam(name = "size",required = false,defaultValue = "10") Long size,
+//                                                    @RequestParam(name = "page",required = false,defaultValue = "0") Long page){
+//       return postRestMapper.toPostsUserResponse(postInputPort.findAllPostRecent(userId,size,page));
+//    }
 
 }

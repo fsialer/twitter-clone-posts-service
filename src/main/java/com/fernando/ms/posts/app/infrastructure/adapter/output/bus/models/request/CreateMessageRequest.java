@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class CreateMessageRequest {
-    private Long userId;
+    private String userId;
     private String targetType;
     private String targetId;
     private String content;

@@ -11,8 +11,4 @@ public interface PostPersistencePort {
     Mono<Post> save(Post post);
     Mono<Void> delete(String id);
     Mono<Boolean> verify(String id);
-    Flux<Post> findAllPostMe(User user);
-    Flux<Post> findAllPostMe(User user,Long size,Long page);
-    Flux<Post> findAllPostRecent(Iterable<User> followed,Long size,Long page);
-
 }

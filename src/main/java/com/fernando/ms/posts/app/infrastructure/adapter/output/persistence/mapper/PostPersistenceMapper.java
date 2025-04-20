@@ -3,7 +3,6 @@ package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapp
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import reactor.core.publisher.Flux;
@@ -24,7 +23,6 @@ public interface PostPersistenceMapper {
         return post.map(this::toPost); // Convierte cada elemento individualmente
     }
 
-    @Mapping(target = "user",expression = "java(toUser(post))")
     Post toPost(PostDocument post);
 
     @Mapping(target = "datePost",expression = "java(mapDatePost())")
@@ -43,25 +41,4 @@ public interface PostPersistenceMapper {
     default LocalDateTime mapUpdatedAt(){
         return LocalDateTime.now();
     }
-
-
-    default User toUser(PostDocument posts){
-        return User.builder()
-                .id(posts.getPostUser().getUserId())
-                .build();
-    }
-
-
-    default PostUser toPostUser(User user){
-        return PostUser.builder()
-                .userId(user.getId())
-                .build();
-    }
-
-    default Iterable<PostUser> toPostUsers(Iterable<User> users){
-        List<PostUser> postUsers = new ArrayList<>();
-        users.forEach(user -> postUsers.add(toPostUser(user)));
-        return postUsers;
-    }
-
 }

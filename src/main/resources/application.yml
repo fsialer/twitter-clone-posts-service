@@ -7,7 +7,7 @@ spring:
     default-property-inclusion: NON_NULL
   data:
     mongodb:
-      uri: ${DB_HOST:mongodb://localhost:27017/tc_posts_db}
+      uri: ${DB_HOST:mongodb://localhost:27017/tc_posts_db?authSource=admin}
       username: ${DB_USERNAME:root}
       password: ${DB_PASSWORD:1234}
 management:
@@ -19,7 +19,10 @@ followers-service:
   url: ${FOLLOWERS_URL:http://localhost:8084/v1/followers}
 users-service:
   url: ${USERS_URL:http://localhost:8080/v1/users}
-service-bus:
-  connection-string: ${CONNECTION_SEND_NOTIFICATION:service-bus}
-  topic-name: send-notifications
-  #queue-name: ${SB_QUEUE_NAME}
+azure:
+  servicebus:
+    namespace: ${AZURE_SERVICEBUS_NAMESPACE}
+    connection-string: ${AZURE_SERVICEBUS_CONNECTION_STRING}
+    topic-name: ${AZURE_SERVICEBUS_TOPIC_NAME}     # Si usas topic
+    #queue-name: ${AZURE_SERVICEBUS_QUEUE_NAME}     # Si usas cola
+    #subscription-name: ${AZURE_SERVICEBUS_SUBSCRIPTION_NAME} # Si usas topic+subscription

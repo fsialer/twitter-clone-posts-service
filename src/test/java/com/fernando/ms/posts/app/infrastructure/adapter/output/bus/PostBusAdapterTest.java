@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class PostBusAdapterTest {
-    //@Mock
+    @Mock
     private ServiceBusSenderClient sender;
     @Autowired
     private ObjectMapper objectMapper;
@@ -46,7 +46,7 @@ public class PostBusAdapterTest {
         Post post = TestUtilPost.buildPostMock();
 
         CreateMessageRequest createMessageRequest = CreateMessageRequest.builder()
-                .userId(post.getUser().getId())
+                .userId(post.getUserId())
                 .targetId(post.getId())
                 .content(post.getContent())
                 .datePost(post.getDatePost().toString())

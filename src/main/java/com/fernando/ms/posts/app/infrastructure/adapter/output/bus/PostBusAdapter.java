@@ -8,23 +8,18 @@ import com.fernando.ms.posts.app.application.ports.output.PostBusOutputPort;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.bus.models.request.CreateMessageRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-//@RequiredArgsConstructor
+//@Component
+@RequiredArgsConstructor
 public class PostBusAdapter implements PostBusOutputPort {
     private final ServiceBusSenderClient sender;
     private final ObjectMapper objectMapper;
 
-    public PostBusAdapter(ServiceBusSenderClient sender, ObjectMapper objectMapper) {
-        this.sender = sender;
-        this.objectMapper = objectMapper;
-    }
     @Override
     public void sendNotification(Post post) {
         try{
             CreateMessageRequest createMessageRequest= CreateMessageRequest.builder()
-                    .userId(post.getUser().getId())
+                    .userId(post.getUserId())
                     .content(post.getContent())
                     .datePost(post.getDatePost().toString())
                     .targetId(post.getId())

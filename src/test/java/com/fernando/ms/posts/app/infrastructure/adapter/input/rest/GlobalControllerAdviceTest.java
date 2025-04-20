@@ -95,7 +95,7 @@ public class GlobalControllerAdviceTest {
     void Expect_UserNotFoundException_When_UserIdentifierIsInvalid() throws JsonProcessingException {
         CreatePostRequest createUserRequest= TestUtilPost.buildCreatePostRequestMock();
         Post post= TestUtilPost.buildPostMock();
-        when(postRestMapper.toPost(anyLong(),any(CreatePostRequest.class))).thenReturn(post);
+        when(postRestMapper.toPost(anyString(),any(CreatePostRequest.class))).thenReturn(post);
         when(postInputPort.save(any(Post.class))).thenReturn(Mono.error(new UserNotFoundException()));
 
         webTestClient.post()

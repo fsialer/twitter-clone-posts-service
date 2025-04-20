@@ -8,7 +8,7 @@ public class TestUtilsMessage {
 
     public static CreateMessageRequest buildCreateMessageRequestMock(){
         return CreateMessageRequest.builder()
-                .userId(1L)
+                .userId("5478d5aq548qww966")
                 .content("Hello everybody")
                 .datePost(LocalDateTime.now().toString())
                 .targetId("5478d5aq548qww966")

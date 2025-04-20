@@ -22,7 +22,7 @@ public class PostDocument {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     @Indexed
-    private PostUser postUser;
+    private String userId;
 
 }
 

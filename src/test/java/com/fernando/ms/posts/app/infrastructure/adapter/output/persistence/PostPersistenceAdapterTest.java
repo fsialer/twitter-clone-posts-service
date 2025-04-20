@@ -4,7 +4,6 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostPersistenceMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.repository.PostReactiveMongoRepository;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilsUser;
@@ -20,8 +19,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
@@ -114,56 +111,4 @@ public class PostPersistenceAdapterTest {
 
         Mockito.verify(postReactiveMongoRepository, times(1)).existsById(anyString());
     }
-
-
-    @Test
-    @DisplayName("When User Exists Expect List of Posts")
-    void When_UserExists_Expect_ListOfPosts() {
-        Post post = TestUtilPost.buildPostMock();
-        PostDocument postDocument = TestUtilPost.buildPostDocumentMock();
-        User user = TestUtilsUser.buildUserMock();
-        PostUser postUser = PostUser.builder().userId(user.getId()).build();
-
-        when(postReactiveMongoRepository.findAllUserAndPageAndSize(any(PostUser.class), anyLong(), anyLong()))
-                .thenReturn(Flux.just(postDocument));
-        when(postPersistenceMapper.toPosts(any(Flux.class))).thenReturn(Flux.just(post));
-        when(postPersistenceMapper.toPostUser(any(User.class))).thenReturn(postUser);
-
-        Flux<Post> result = postPersistenceAdapter.findAllPostMe(user, 10L, 0L);
-
-        StepVerifier.create(result)
-                .expectNext(post)
-                .verifyComplete();
-
-        Mockito.verify(postReactiveMongoRepository, Mockito.times(1))
-                .findAllUserAndPageAndSize(any(PostUser.class), anyLong(), anyLong());
-        Mockito.verify(postPersistenceMapper, Mockito.times(1)).toPosts(any(Flux.class));
-        Mockito.verify(postPersistenceMapper, Mockito.times(1)).toPostUser(any(User.class));
-    }
-
-    @Test
-    @DisplayName("When Followed Users Are Provided Expect List Of Recent Posts")
-    void When_FollowedUsersAreProvided_Expect_ListOfRecentPosts() {
-        Post post = TestUtilPost.buildPostMock();
-        PostDocument postDocument = TestUtilPost.buildPostDocumentMock();
-        User user = TestUtilsUser.buildUserMock();
-        PostUser postUsers = TestUtilPost.buildPostUserMock();
-
-        when(postPersistenceMapper.toPostUsers(anyList())).thenReturn(Collections.singletonList(postUsers));
-        when(postReactiveMongoRepository.findAllPostRecent(anyList(), anyLong(), anyLong()))
-                .thenReturn(Flux.just(postDocument));
-        when(postPersistenceMapper.toPosts(any(Flux.class))).thenReturn(Flux.just(post));
-
-        Flux<Post> result = postPersistenceAdapter.findAllPostRecent(Collections.singletonList(user), 10L, 0L);
-
-        StepVerifier.create(result)
-                .expectNext(post)
-                .verifyComplete();
-
-        Mockito.verify(postPersistenceMapper, times(1)).toPostUsers(anyList());
-        Mockito.verify(postReactiveMongoRepository, times(1))
-                .findAllPostRecent(anyList(), anyLong(), anyLong());
-        Mockito.verify(postPersistenceMapper, times(1)).toPosts(any(Flux.class));
-    }
-
 }

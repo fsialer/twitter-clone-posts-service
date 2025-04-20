@@ -85,7 +85,7 @@ public class PostRestAdapterTest {
         Post post = TestUtilPost.buildPostMock();
         PostResponse postResponse = TestUtilPost.buildPostResponseMock();
 
-        when(postRestMapper.toPost(anyLong(),any(CreatePostRequest.class))).thenReturn(post);
+        when(postRestMapper.toPost(anyString(),any(CreatePostRequest.class))).thenReturn(post);
         when(postInputPort.save(any(Post.class))).thenReturn(Mono.just(post));
         when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
 
@@ -98,7 +98,7 @@ public class PostRestAdapterTest {
                 .expectBody()
                 .jsonPath("$.content").isEqualTo("Hello everybody");
 
-        Mockito.verify(postRestMapper, times(1)).toPost(anyLong(),any(CreatePostRequest.class));
+        Mockito.verify(postRestMapper, times(1)).toPost(anyString(),any(CreatePostRequest.class));
         Mockito.verify(postInputPort, times(1)).save(any(Post.class));
         Mockito.verify(postRestMapper, times(1)).toPostResponse(any(Post.class));
     }
@@ -173,47 +173,4 @@ public class PostRestAdapterTest {
         Mockito.verify(postInputPort, times(1)).verify(anyString());
         Mockito.verify(postRestMapper, times(1)).toExistsPostResponse(anyBoolean());
     }
-
-    @Test
-    @DisplayName("When User Posts Exist Expect List of User Posts")
-    void When_UserPostsExist_Expect_ListOfUserPosts() {
-        PostUserResponse postUserResponse = TestUtilPost.buildPostUserResponseMock();
-
-        when(postInputPort.findAllPostMe(anyLong(), anyLong(), anyLong())).thenReturn(Flux.just(TestUtilPost.buildPostMock()));
-        when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
-
-        webTestClient.get()
-                .uri("/v1/posts/me?size=10&page=0", 1L)
-                .header("X-User-Id","1")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$[0].content").isEqualTo("Hello everybody");
-
-        Mockito.verify(postInputPort, Mockito.times(1)).findAllPostMe(anyLong(), anyLong(), anyLong());
-        Mockito.verify(postRestMapper, Mockito.times(1)).toPostsUserResponse(any(Flux.class));
-    }
-
-    @Test
-    @DisplayName("When Follower Id Is Provided Expect List Of Recent Posts")
-    void When_FollowerIdIsProvided_Expect_ListOfRecentPosts() {
-        PostUserResponse postUserResponse = TestUtilPost.buildPostUserResponseMock();
-        Post post = TestUtilPost.buildPostMock();
-
-        when(postInputPort.findAllPostRecent(anyLong(), anyLong(), anyLong())).thenReturn(Flux.just(post));
-        when(postRestMapper.toPostsUserResponse(any(Flux.class))).thenReturn(Flux.just(postUserResponse));
-
-        webTestClient.get()
-                .uri("/v1/posts/recent?size=10&page=0", 1L)
-                .header("X-User-Id","1")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$[0].content").isEqualTo("Hello everybody");
-
-        Mockito.verify(postInputPort, times(1)).findAllPostRecent(anyLong(), anyLong(), anyLong());
-        Mockito.verify(postRestMapper, times(1)).toPostsUserResponse(any(Flux.class));
-    }
-
-
 }

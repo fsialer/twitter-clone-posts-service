@@ -25,12 +25,17 @@ public interface PostRestMapper {
 
     PostResponse toPostResponse(Post post);
 
-    @Mapping(target = "user",expression = "java(mapUser(userId))")
-    Post toPost(Long userId,CreatePostRequest rq);
+    //@Mapping(target = "user",expression = "java(mapUser(userId))")
+    default Post toPost(String userId,CreatePostRequest rq){
+        return Post.builder()
+                .content(rq.getContent())
+                .userId(userId)
+                .build();
+    }
 
-    default User mapUser(Long userId){
-        return User.builder()
-                .id(userId)
+    default Post mapUser(String userId){
+        return Post.builder()
+                .userId(userId)
                 .build();
     }
 
@@ -42,18 +47,18 @@ public interface PostRestMapper {
                 .build();
     }
 
-    default Flux<PostUserResponse> toPostsUserResponse(Flux<Post> posts){
-        return posts.map(this::toPostUserResponse);
-    }
+//    default Flux<PostUserResponse> toPostsUserResponse(Flux<Post> posts){
+//        return posts.map(this::toPostUserResponse);
+//    }
 
-    @Mapping(target="user", expression = "java(toUserResponse(post))")
-    PostUserResponse toPostUserResponse(Post post);
-
-    default UserResponse toUserResponse(Post post){
-        return UserResponse.builder()
-                .id(post.getUser().getId())
-                .names(post.getUser().getNames())
-                .build();
-    }
+//    @Mapping(target="user", expression = "java(toUserResponse(post))")
+//    PostUserResponse toPostUserResponse(Post post);
+//
+//    default UserResponse toUserResponse(Post post){
+//        return UserResponse.builder()
+//                .id(post.getUser().getId())
+//                .names(post.getUser().getNames())
+//                .build();
+//    }
 
 }
