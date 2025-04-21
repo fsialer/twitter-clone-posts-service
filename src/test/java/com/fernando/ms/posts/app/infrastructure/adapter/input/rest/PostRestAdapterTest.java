@@ -4,17 +4,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.domain.models.PostMedia;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostMediaRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreateMediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
+import com.fernando.ms.posts.app.utils.TestUtilPostMedia;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,6 +33,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +48,12 @@ public class PostRestAdapterTest {
 
     @MockitoBean
     private PostDataInputPort postDataInputPort;
+
+    @MockitoBean
+    private PostMediaInputPort postMediaInputPort;
+
+    @MockitoBean
+    private PostMediaRestMapper postMediaRestMapper;
 
 
     @MockitoBean
@@ -219,4 +232,26 @@ public class PostRestAdapterTest {
     }
 
 
+    @Test
+    @DisplayName("When Generate SasUrl Expect Valid SasUrls")
+    void When_GenerateSasUrl_Expect_ValidSasUrls() {
+        PostMedia postMedia = TestUtilPostMedia.buildPostMedia();
+        PostMediaResponse postMediaResponse = TestUtilPostMedia.buildPostMediaResponse();
+        CreateMediaRequest createMediaRequest = TestUtilPostMedia.builCreateMediaRequest();
+
+        when(postMediaInputPort.generateSasUrl(anyList())).thenReturn(Flux.just(postMedia));
+        when(postMediaRestMapper.toPostMediaResponse(any(Flux.class))).thenReturn(Flux.just(postMediaResponse));
+
+        webTestClient.post()
+                .uri("/v1/posts/media")
+                .bodyValue(createMediaRequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].blobUrl").isEqualTo(postMedia.getBlobUrl())
+                .jsonPath("$[0].uploadUrl").isEqualTo(postMedia.getUploadUrl());
+
+        Mockito.verify(postMediaInputPort, times(1)).generateSasUrl(anyList());
+        Mockito.verify(postMediaRestMapper, times(1)).toPostMediaResponse(any(Flux.class));
+    }
 }

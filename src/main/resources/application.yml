@@ -20,9 +20,13 @@ followers-service:
 users-service:
   url: ${USERS_URL:http://localhost:8080/v1/users}
 azure:
+  storage:
+    account-name: ${AZURE_STORAGE_ACCOUNT_NAME:test_account}
+    account-key: ${AZURE_STORAGE_ACCOUNT_KEY:test_account_key}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME:test_container_name}
   servicebus:
-    namespace: ${AZURE_SERVICEBUS_NAMESPACE}
-    connection-string: ${AZURE_SERVICEBUS_CONNECTION_STRING}
-    topic-name: ${AZURE_SERVICEBUS_TOPIC_NAME}     # Si usas topic
+    namespace: ${AZURE_SERVICEBUS_NAMESPACE:test}
+    connection-string: ${AZURE_SERVICEBUS_CONNECTION_STRING:testconnect}
+    topic-name: ${AZURE_SERVICEBUS_TOPIC_NAME:testtopic}     # Si usas topic
     #queue-name: ${AZURE_SERVICEBUS_QUEUE_NAME}     # Si usas cola
     #subscription-name: ${AZURE_SERVICEBUS_SUBSCRIPTION_NAME} # Si usas topic+subscription

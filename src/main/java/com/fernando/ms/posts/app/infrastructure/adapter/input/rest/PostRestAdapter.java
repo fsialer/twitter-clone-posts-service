@@ -1,16 +1,22 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
+import com.azure.core.annotation.QueryParam;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostMediaRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreateMediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +24,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +33,9 @@ public class PostRestAdapter {
    private final PostInputPort postInputPort;
    private final PostDataInputPort postDataInputPort;
    private final PostRestMapper postRestMapper;
+   private final PostMediaInputPort postMediaInputPort;
    private final PostDataRestMapper postDataRestMapper;
+   private final PostMediaRestMapper postMediaRestMapper;
 
    @GetMapping
     public Flux<PostResponse> findAll(){
@@ -86,6 +95,11 @@ public class PostRestAdapter {
             @PathVariable String id
     ) {
         return postDataInputPort.delete(id);
+    }
+
+    @PostMapping("/media")
+    public Flux<PostMediaResponse> generateSasUrl(@Valid @RequestBody CreateMediaRequest rq){
+        return postMediaRestMapper.toPostMediaResponse(postMediaInputPort.generateSasUrl(postMediaRestMapper.toListString(rq)));
     }
 
 }
