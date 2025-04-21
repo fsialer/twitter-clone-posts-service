@@ -30,3 +30,16 @@ azure:
     topic-name: ${AZURE_SERVICEBUS_TOPIC_NAME:testtopic}     # Si usas topic
     #queue-name: ${AZURE_SERVICEBUS_QUEUE_NAME}     # Si usas cola
     #subscription-name: ${AZURE_SERVICEBUS_SUBSCRIPTION_NAME} # Si usas topic+subscription
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /v3/api-docs
+  openapi:
+    info:
+        title: Twitter Clone Posts Service API
+        version: 1.0.0
+        description: API documentation for the Twitter Clone Posts Service

@@ -53,6 +53,7 @@ dependencies {
 	implementation group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
 	implementation 'com.azure:azure-messaging-servicebus:7.15.0'
 	implementation 'com.azure:azure-storage-blob:12.25.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.6'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
