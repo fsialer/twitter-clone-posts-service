@@ -2,6 +2,35 @@
 > Este microservicio se encarga de gestionar los post, realizados por el usuario para que el contenido 
 > pueda ser visualizado por los demas integrantes de la plataforma.
 
+## Variables de entorno
+```
+DB_HOST=mongodb://localhost:27017/posts_db?authSource=admin
+```
+```
+DB_USERNAME=admin
+```
+```
+DB_PASSWORD=*****
+```
+```
+AZURE_STORAGE_ACCOUNT_NAME=<STORAGE_ACCOUNT>
+```
+```
+AZURE_STORAGE_ACCOUNT_KEY=*****
+```
+```
+AZURE_STORAGE_CONTAINER_NAME=<CONTAINER_NAME>
+```
+```
+AZURE_SERVICEBUS_NAMESPACE=<SERVICEBUS_NAMESPACE>
+```
+```
+AZURE_SERVICEBUS_CONNECTION_STRING=<SERVICEBUS_CONNECTION_STRING>
+```
+```
+AZURE_SERVICEBUS_TOPIC_NAME=<SERVICEBUS_TOPIC_NAME>
+```
+
 ## Tabla de recursos 
 | NOMBRE                                         | RUTA                 | PETICION | PARAMETROS | CUERPO                                                                    | 
 |------------------------------------------------|----------------------|----------|------------|---------------------------------------------------------------------------|
