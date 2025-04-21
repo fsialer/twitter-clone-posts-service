@@ -3,6 +3,7 @@ package com.fernando.ms.posts.app.domain.models;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,4 +15,5 @@ public class Post {
     private String content;
     private LocalDateTime datePost;
     private String userId;
+    private Set<Media> media;
 }

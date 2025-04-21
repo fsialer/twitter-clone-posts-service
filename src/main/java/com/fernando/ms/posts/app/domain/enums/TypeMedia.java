@@ -1,5 +1,5 @@
 package com.fernando.ms.posts.app.domain.enums;
 
-public enum TypeTarget {
-    LIKE
+public enum TypeMedia {
+    IMAGE,VIDEO
 }

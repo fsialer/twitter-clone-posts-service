@@ -16,7 +16,6 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.enums.ErrorType.FUNCTIONAL;
