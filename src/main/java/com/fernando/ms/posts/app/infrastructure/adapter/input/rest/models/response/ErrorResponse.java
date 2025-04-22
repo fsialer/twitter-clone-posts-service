@@ -1,6 +1,6 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response;
 
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.enums.ErrorType;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.enums.ErrorType;
 import lombok.*;
 
 import java.util.List;

@@ -9,4 +9,5 @@ public interface PostPersistencePort {
     Mono<Post> findById(String id);
     Mono<Post> save(Post post);
     Mono<Void> delete(String id);
+    Mono<Boolean> verify(String id);
 }

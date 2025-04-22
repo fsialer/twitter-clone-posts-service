@@ -1,16 +1,21 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper;
 
+import com.fernando.ms.posts.app.domain.models.Media;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostMedia;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface PostPersistenceMapper {
+
     default Flux<Post> toPosts(Flux<PostDocument> posts) {
         return posts.map(this::toPost); // Convierte cada elemento individualmente
     }
@@ -21,10 +26,24 @@ public interface PostPersistenceMapper {
 
     Post toPost(PostDocument post);
 
-    @Mapping(target = "datePost",expression = "java(mapDatePost())")
-    @Mapping(target = "createdAt",expression = "java(mapCreatedAt())")
-    @Mapping(target = "updatedAt",expression = "java(mapUpdatedAt())")
-    PostDocument toPostDocument(Post post);
+    default PostDocument toPostDocument(Post post){
+        return PostDocument.builder()
+                .id(post.getId())
+                .content(post.getContent())
+                .userId(post.getUserId())
+                .createdAt(mapCreatedAt())
+                .updatedAt(mapUpdatedAt())
+                .media(mapMedia(post.getMedia()))
+                .build();
+    }
+
+    default Set<PostMedia> mapMedia(Set<Media> media) {
+        return media.stream()
+                .map(this::toPostMedia)
+                .collect(Collectors.toSet());
+    }
+
+    PostMedia toPostMedia(Media media);
 
     default LocalDateTime mapDatePost(){
         return LocalDateTime.now();
@@ -37,5 +56,4 @@ public interface PostPersistenceMapper {
     default LocalDateTime mapUpdatedAt(){
         return LocalDateTime.now();
     }
-
 }

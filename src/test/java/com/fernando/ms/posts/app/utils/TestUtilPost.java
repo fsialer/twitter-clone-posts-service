@@ -1,14 +1,19 @@
 package com.fernando.ms.posts.app.utils;
 
+import com.fernando.ms.posts.app.domain.models.Media;
 import com.fernando.ms.posts.app.domain.models.Post;
-import com.fernando.ms.posts.app.domain.models.User;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.UserResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostUser;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostMedia;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public class TestUtilPost {
 
@@ -17,7 +22,11 @@ public class TestUtilPost {
                 .id("1")
                 .content("Hello everybody")
                 .datePost(LocalDateTime.now())
-                .user(User.builder().id(1L).build())
+                .userId("fdsfds4544")
+                .media(Set.of(Media.builder()
+                        .type("IMAGE")
+                        .url("https://<storage>.blob.core.windows.net/posts/imagen.jpg")
+                        .build()))
                 .build();
     }
 
@@ -28,7 +37,11 @@ public class TestUtilPost {
                 .datePost(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .postUser(PostUser.builder().userId(1L).build())
+                .userId("fdsfds4544")
+                .media(Set.of(PostMedia.builder()
+                        .type("IMAGE")
+                        .url("https://<storage>.blob.core.windows.net/posts/imagen.jpg")
+                        .build()))
                 .build();
     }
 
@@ -42,14 +55,35 @@ public class TestUtilPost {
 
     public static CreatePostRequest buildCreatePostRequestMock(){
         return CreatePostRequest.builder()
-                .userId(1L)
                 .content("Hello everybody")
+                .media(Set.of(MediaRequest.builder()
+                                .type("IMAGE")
+                                .url("https://<storage>.blob.core.windows.net/posts/imagen.jpg")
+                        .build()))
                 .build();
     }
 
     public static UpdatePostRequest buildUpdatePostRequestMock(){
         return UpdatePostRequest.builder()
                 .content("Hello everybody")
+                .build();
+    }
+
+    public static ExistsPostResponse buildExistsPostResponseMock(){
+        return ExistsPostResponse.builder()
+                .exists(true)
+                .build();
+    }
+
+    public static PostUserResponse buildPostUserResponseMock(){
+        return PostUserResponse.builder()
+                .id("67894256c864356454574770")
+                .content("Hello everybody")
+                .datePost(LocalDateTime.now())
+                .user(UserResponse.builder()
+                        .id(1L)
+                        .names("Fernando Sialer")
+                        .build())
                 .build();
     }
 }

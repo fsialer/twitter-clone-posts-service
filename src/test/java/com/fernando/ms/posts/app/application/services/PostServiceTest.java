@@ -3,6 +3,7 @@ package com.fernando.ms.posts.app.application.services;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.infrastructure.adapter.output.bus.PostBusAdapter;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,16 +17,18 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PostServiceTest {
+class PostServiceTest {
     @Mock
     private PostPersistencePort postPersistencePort;
 
     @InjectMocks
     private PostService postService;
+
+    @Mock
+    private PostBusAdapter postBusAdapter;
 
     @Test
     @DisplayName("When Posts Information Is Correct Expect A List Posts")
@@ -55,7 +58,6 @@ public class PostServiceTest {
     @Test
     @DisplayName("Expect PostNotFoundException When Post Identifier Is Invalid")
     void Expect_PostNotFoundException_When_PostIdentifierIsInvalid(){
-        Post post= TestUtilPost.buildPostMock();
         when(postPersistencePort.findById(anyString())).thenReturn(Mono.empty());
         Mono<Post> userMono=postService.findById("1");
         StepVerifier.create(userMono)
@@ -70,18 +72,19 @@ public class PostServiceTest {
     void When_PostIsSavedSuccessfully_Expect_PostInformationCorrect() {
         Post post = TestUtilPost.buildPostMock();
         when(postPersistencePort.save(any(Post.class))).thenReturn(Mono.just(post));
-
+        //doNothing().when(postBusAdapter).sendNotification(any(Post.class));
         Mono<Post> savedPost = postService.save(post);
 
         StepVerifier.create(savedPost)
                 .expectNext(post)
                 .verifyComplete();
         Mockito.verify(postPersistencePort, times(1)).save(any(Post.class));
+        //Mockito.verify(postBusAdapter, Mockito.times(1)).sendNotification(any(Post.class));
     }
 
     @Test
     @DisplayName("When Post Is Update Except Post Information Save Correctly")
-    void When_PostIsUpdateExcept_PostInformationSaveCorrectly(){
+    void When_PostIsUpdate_Except_PostInformationSaveCorrectly(){
         Post post=TestUtilPost.buildPostMock();
         when(postPersistencePort.findById(anyString())).thenReturn(Mono.just(post));
         when(postPersistencePort.save(any(Post.class))).thenReturn(Mono.just(post));
@@ -98,6 +101,7 @@ public class PostServiceTest {
     @DisplayName("Expect PostNotFoundException When Updated Post Identifier Is Invalid")
     void Expect_PostNotFoundException_When_UpdatePostIdentifierIsInvalid(){
         Post post=TestUtilPost.buildPostMock();
+        //when(externalUserOutputPort.verify(anyLong())).thenReturn(Mono.just(true));
         when(postPersistencePort.findById(anyString())).thenReturn(Mono.empty());
         Mono<Post> updatePost=postService.update("1",post);
         StepVerifier.create(updatePost)
@@ -105,6 +109,7 @@ public class PostServiceTest {
                 .verify();
         Mockito.verify(postPersistencePort,times(0)).save(any(Post.class));
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
+        //Mockito.verify(externalUserOutputPort,times(1)).verify(anyLong());
     }
 
     @Test
@@ -138,5 +143,33 @@ public class PostServiceTest {
         Mockito.verify(postPersistencePort, Mockito.never()).delete(anyString());
     }
 
+    @Test
+    @DisplayName("When Post Verification Is Successful Expect Post Verified")
+    void When_UserVerificationIsSuccessful_Expect_UserVerified() {
 
+        when(postPersistencePort.verify(anyString())).thenReturn(Mono.just(true));
+
+        Mono<Boolean> result = postService.verify("678318b2c8dda45d9a6c300d");
+
+        StepVerifier.create(result)
+                .expectNext(true)
+                .verifyComplete();
+
+        Mockito.verify(postPersistencePort, times(1)).verify(anyString());
+    }
+
+    @Test
+    @DisplayName("When Post Verification Is Incorrect Expect Post Do Not Verified")
+    void When_UserVerificationIsIncorrect_Expect_UserDoNotVerified() {
+
+        when(postPersistencePort.verify(anyString())).thenReturn(Mono.just(false));
+
+        Mono<Boolean> result = postService.verify("678318b2c8dda45d9a6c300d");
+
+        StepVerifier.create(result)
+                .expectNext(false)
+                .verifyComplete();
+
+        Mockito.verify(postPersistencePort, times(1)).verify(anyString());
+    }
 }

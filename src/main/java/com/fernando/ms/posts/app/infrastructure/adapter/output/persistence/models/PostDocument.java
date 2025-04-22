@@ -2,9 +2,11 @@ package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mode
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,10 +18,13 @@ public class PostDocument {
     @Id
     private String id;
     private String content;
+    @Indexed
     private LocalDateTime datePost;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private PostUser postUser;
+    @Indexed
+    private String userId;
+    private Set<PostMedia> media;
 
 }
 

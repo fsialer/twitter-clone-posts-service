@@ -2,11 +2,54 @@ server:
   port: 8081
 spring:
   application:
-    name:twitter-clone-posts-service
+    name: twitter-clone-posts-service
   jackson:
     default-property-inclusion: NON_NULL
   data:
     mongodb:
-      uri: mongodb://localhost:27017/tc_posts_db
-
-
+      uri: ${DB_HOST:mongodb://localhost:27017/tc_posts_db?authSource=admin}
+      username: ${DB_USERNAME:root}
+      password: ${DB_PASSWORD:1234}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, info, prometheus
+    endpoint:
+      prometheus:
+        enabled: true
+    metrics:
+      enable:
+        jvm: true
+        logback: false
+      export:
+        prometheus:
+          enabled: true
+followers-service:
+  url: ${FOLLOWERS_URL:http://localhost:8084/v1/followers}
+users-service:
+  url: ${USERS_URL:http://localhost:8080/v1/users}
+azure:
+  storage:
+    account-name: ${AZURE_STORAGE_ACCOUNT_NAME:test_account}
+    account-key: ${AZURE_STORAGE_ACCOUNT_KEY:test_account_key}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME:test_container_name}
+  servicebus:
+    namespace: ${AZURE_SERVICEBUS_NAMESPACE:test}
+    connection-string: ${AZURE_SERVICEBUS_CONNECTION_STRING:testconnect}
+    topic-name: ${AZURE_SERVICEBUS_TOPIC_NAME:testtopic}     # Si usas topic
+    #queue-name: ${AZURE_SERVICEBUS_QUEUE_NAME}     # Si usas cola
+    #subscription-name: ${AZURE_SERVICEBUS_SUBSCRIPTION_NAME} # Si usas topic+subscription
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /v3/api-docs
+  openapi:
+    info:
+        title: Twitter Clone Posts Service API
+        version: 1.0.0
+        description: API documentation for the Twitter Clone Posts Service

@@ -1,10 +1,11 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,7 +16,8 @@ public class CreatePostRequest {
 
     @NotBlank(message = "Field content cannot be null or blank")
     private String content;
-    @NotNull(message = "Field userId cannot be null")
-    private Long userId;
+    @Valid
+    @NotEmpty(message = "Field media cannot be null or empty")
+    private Set<MediaRequest> media;
 
 }

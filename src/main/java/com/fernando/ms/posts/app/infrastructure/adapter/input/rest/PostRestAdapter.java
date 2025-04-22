@@ -1,12 +1,24 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
+import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostMediaRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreateMediaRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,45 +29,97 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts")
+@RequestMapping("/v1/posts")
+@Tag(name = "Posts", description = "Operations related to post")
 public class PostRestAdapter {
    private final PostInputPort postInputPort;
+   private final PostDataInputPort postDataInputPort;
    private final PostRestMapper postRestMapper;
+   private final PostMediaInputPort postMediaInputPort;
+   private final PostDataRestMapper postDataRestMapper;
+   private final PostMediaRestMapper postMediaRestMapper;
 
-   @GetMapping
+    @GetMapping
+    @Operation(summary = "Find all posts")
+    @ApiResponse(responseCode = "200", description = "Found all posts")
     public Flux<PostResponse> findAll(){
         return  postRestMapper.toPostsResponse(postInputPort.findAll());
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Find post by id")
+    @ApiResponse(responseCode = "200", description = "Found post by id")
     public Mono<ResponseEntity<PostResponse>> findById(@PathVariable String id){
         return postInputPort.findById(id)
-                .flatMap(post->{
-                    return Mono.just(ResponseEntity.ok(postRestMapper.toPostResponse(post)));
-                });
+                .flatMap(post-> Mono.just(ResponseEntity.ok(postRestMapper.toPostResponse(post))));
     }
 
     @PostMapping
-    public Mono<ResponseEntity<PostResponse>> save(@Valid @RequestBody  CreatePostRequest rq){
-        return postInputPort.save(postRestMapper.toPost(rq))
+    @Operation(summary = "Save post by user")
+    @ApiResponse(responseCode = "201", description = "Saved post by user")
+    public Mono<ResponseEntity<PostResponse>> save(
+            @RequestHeader("X-User-Id") String userId,
+            @Valid @RequestBody  CreatePostRequest rq
+    ) {
+
+        return postInputPort.save(postRestMapper.toPost(userId,rq))
                 .flatMap(post -> {
-                    String location = "/posts/".concat(post.getId().toString());
+                    String location = "/v1/posts/".concat(post.getId());
                     return Mono.just(ResponseEntity.created(URI.create(location)).body(postRestMapper.toPostResponse(post)));
                 });
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update post by id")
+    @ApiResponse(responseCode = "200", description = "Updated post by id")
     public Mono<ResponseEntity<PostResponse>> update(@PathVariable("id") String id,@Valid @RequestBody UpdatePostRequest rq){
        return postInputPort.update(id,postRestMapper.toPost(rq))
-               .flatMap(post->{
-                   return Mono.just(ResponseEntity.ok().body(postRestMapper.toPostResponse(post)));
-               });
+               .flatMap(post-> Mono.just(ResponseEntity.ok().body(postRestMapper.toPostResponse(post))));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete post by id")
+    @ApiResponse(responseCode ="204", description = "Deleted post by id")
     public Mono<Void> delete(@PathVariable("id") String id){
        return postInputPort.delete(id);
+    }
+
+    @GetMapping("/{id}/verify")
+    @Operation(summary = "Verify post by id")
+    @ApiResponse(responseCode ="200", description = "Exists post by id")
+    public Mono<ResponseEntity<ExistsPostResponse>> verify(@PathVariable("id") String id){
+       return postInputPort.verify(id)
+               .flatMap(exists->Mono.just(ResponseEntity.ok().body(postRestMapper.toExistsPostResponse(exists))));
+    }
+
+    @PostMapping("/data")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Save post data by user")
+    @ApiResponse(responseCode ="201", description = "Saved post data by user")
+    public Mono<Void> saveData(
+            @RequestHeader("X-User-Id") String userId,
+            @Valid @RequestBody CreatePostDataRequest rq
+    ) {
+        return postDataInputPort.save(postDataRestMapper.toPostData(userId,rq));
+    }
+
+    @DeleteMapping("/data/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponse(responseCode ="204", description = "Deleted post data by id")
+    @Operation(summary = "Delete post data by id")
+    public Mono<Void> deleteData(
+            @RequestHeader("X-User-Id") String userId,
+            @PathVariable String id
+    ) {
+        return postDataInputPort.delete(id);
+    }
+
+    @PostMapping("/media")
+    @Operation(summary = "Generate sas url for media")
+    @ApiResponse(responseCode ="200", description = "Generated sas url")
+    public Flux<PostMediaResponse> generateSasUrl(@Valid @RequestBody CreateMediaRequest rq){
+        return postMediaRestMapper.toPostMediaResponse(postMediaInputPort.generateSasUrl(postMediaRestMapper.toListString(rq)));
     }
 
 }

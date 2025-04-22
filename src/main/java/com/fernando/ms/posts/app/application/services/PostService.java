@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class PostService implements PostInputPort {
     private final PostPersistencePort postPersistencePort;
+    //private final PostBusAdapter postBusAdapter;
 
     @Override
     public Flux<Post> findAll() {
@@ -27,6 +28,7 @@ public class PostService implements PostInputPort {
     @Override
     public Mono<Post> save(Post post) {
         return postPersistencePort.save(post);
+                //.doOnSuccess(postBusAdapter::sendNotification);
     }
 
     @Override
@@ -43,8 +45,11 @@ public class PostService implements PostInputPort {
     public Mono<Void> delete(String id) {
         return postPersistencePort.findById(id)
                 .switchIfEmpty(Mono.error(PostNotFoundException::new))
-                .flatMap(postDelete->{
-                    return postPersistencePort.delete(id);
-                });
+                .flatMap(post->postPersistencePort.delete(post.getId()));
+    }
+
+    @Override
+    public Mono<Boolean> verify(String id) {
+        return postPersistencePort.verify(id);
     }
 }
