@@ -1,6 +1,5 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
-import com.azure.core.annotation.QueryParam;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;

@@ -14,7 +14,17 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, metrics
+        include: health, metrics, info, prometheus
+    endpoint:
+      prometheus:
+        enabled: true
+    metrics:
+      enable:
+        jvm: true
+        logback: false
+      export:
+        prometheus:
+          enabled: true
 followers-service:
   url: ${FOLLOWERS_URL:http://localhost:8084/v1/followers}
 users-service:
