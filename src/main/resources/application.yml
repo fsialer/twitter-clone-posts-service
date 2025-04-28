@@ -21,7 +21,7 @@ management:
     metrics:
       enable:
         jvm: true
-        logback: false
+        logback: true
       export:
         prometheus:
           enabled: true
