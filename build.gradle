@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.fernanando.ms.posts.app'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.1'
 
 java {
 	toolchain {
@@ -50,7 +50,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.6.2'
 	implementation group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
-	implementation 'com.azure:azure-messaging-servicebus:7.15.0'
+	implementation 'com.azure:azure-messaging-servicebus:7.17.9'
 	implementation 'com.azure:azure-storage-blob:12.25.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.6'
 	implementation("io.micrometer:micrometer-registry-prometheus")

@@ -1,3 +1,6 @@
+## [v1.0.1] - 2025-04-28
+### 🦺 Security
+* Update dependencies [com.azure:azure-messaging-servicebus:7.15.0]  to [com.azure:azure-messaging-servicebus:7.17.9] to fix vulnerabilities.
 ## [v1.0.0] - 2025-04-22
 ### 🚀 Features
 * add feature monitoring with prometheus

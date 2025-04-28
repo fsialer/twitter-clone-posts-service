@@ -34,6 +34,7 @@ AZURE_SERVICEBUS_TOPIC_NAME=<SERVICEBUS_TOPIC_NAME>
 ## Tabla de recursos 
 | NOMBRE                                        | RUTA                    | PETICION | PARAMETROS | CUERPO                                                                                                                                       | 
 |-----------------------------------------------|-------------------------|----------|------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| Actuator                                       | /actuator       | GET      | NINGUNO     | NINGUNO                                                                      |
 | Documentacion                                 | /swagger-ui/index.html  | GET      | NINGUNO    | NINGUNO                                                                                                                                      |
 | Listar posts general                          | /v1/posts               | GET      | NINGUNO    | NINGUNO                                                                                                                                      |
 | Obtener post por id                           | /v1/posts/{id}          | GET      | NINGUNO    | NINGUNO                                                                                                                                      |
