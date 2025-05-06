@@ -3,23 +3,20 @@
 * Update dependencies [com.azure:azure-messaging-servicebus:7.15.0]  to [com.azure:azure-messaging-servicebus:7.17.9] to fix vulnerabilities.
 ## [v1.0.0] - 2025-04-22
 ### 🚀 Features
-* add feature monitoring with prometheus
-* Authentication Server with consent finish
-* add feature-Api Post Documentation
-* add new attribute media in save post
-* add variable environment
-* new feature: generate SASURL for upload files
-* new feature PostData for save interaction with the post
+* added monitoring with prometheus
+* added Post Documentation
 * added actuator
-* add Dockerfile
-* add worflow finish
-* add services bus
-* verify exists post finish
-* delete post finish
-* update post finish
-* save post finish
-* find by id finish
-### 🔧 Refactor
-* change image docker and expose port
+* added Dockerfile
+* added workflow with Github Actions for build image
+* added generate SASURL for upload files
+* added delete postdata by id
+* added save postdata by post
+* added services bus
+* added verify exists post
+* added delete post
+* added list post by user
+* added list post 
+* added save post
+* added find by id
 ### 📄 Documentation
 * create README.md & CHANGELOG.md
