@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class PostService implements PostInputPort {
     private final PostPersistencePort postPersistencePort;
-    //private final PostBusAdapter postBusAdapter;
 
     @Override
     public Flux<Post> findAll() {
@@ -28,7 +27,6 @@ public class PostService implements PostInputPort {
     @Override
     public Mono<Post> save(Post post) {
         return postPersistencePort.save(post);
-                //.doOnSuccess(postBusAdapter::sendNotification);
     }
 
     @Override

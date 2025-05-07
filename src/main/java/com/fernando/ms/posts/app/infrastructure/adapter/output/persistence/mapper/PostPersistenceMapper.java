@@ -5,7 +5,6 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostMedia;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -44,10 +43,6 @@ public interface PostPersistenceMapper {
     }
 
     PostMedia toPostMedia(Media media);
-
-    default LocalDateTime mapDatePost(){
-        return LocalDateTime.now();
-    }
 
     default LocalDateTime mapCreatedAt(){
         return LocalDateTime.now();

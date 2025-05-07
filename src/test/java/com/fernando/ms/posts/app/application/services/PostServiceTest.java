@@ -3,7 +3,6 @@ package com.fernando.ms.posts.app.application.services;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.bus.PostBusAdapter;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,9 +25,6 @@ class PostServiceTest {
 
     @InjectMocks
     private PostService postService;
-
-    @Mock
-    private PostBusAdapter postBusAdapter;
 
     @Test
     @DisplayName("When Posts Information Is Correct Expect A List Posts")
@@ -72,14 +68,13 @@ class PostServiceTest {
     void When_PostIsSavedSuccessfully_Expect_PostInformationCorrect() {
         Post post = TestUtilPost.buildPostMock();
         when(postPersistencePort.save(any(Post.class))).thenReturn(Mono.just(post));
-        //doNothing().when(postBusAdapter).sendNotification(any(Post.class));
+
         Mono<Post> savedPost = postService.save(post);
 
         StepVerifier.create(savedPost)
                 .expectNext(post)
                 .verifyComplete();
         Mockito.verify(postPersistencePort, times(1)).save(any(Post.class));
-        //Mockito.verify(postBusAdapter, Mockito.times(1)).sendNotification(any(Post.class));
     }
 
     @Test
@@ -101,7 +96,6 @@ class PostServiceTest {
     @DisplayName("Expect PostNotFoundException When Updated Post Identifier Is Invalid")
     void Expect_PostNotFoundException_When_UpdatePostIdentifierIsInvalid(){
         Post post=TestUtilPost.buildPostMock();
-        //when(externalUserOutputPort.verify(anyLong())).thenReturn(Mono.just(true));
         when(postPersistencePort.findById(anyString())).thenReturn(Mono.empty());
         Mono<Post> updatePost=postService.update("1",post);
         StepVerifier.create(updatePost)
@@ -109,7 +103,6 @@ class PostServiceTest {
                 .verify();
         Mockito.verify(postPersistencePort,times(0)).save(any(Post.class));
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
-        //Mockito.verify(externalUserOutputPort,times(1)).verify(anyLong());
     }
 
     @Test

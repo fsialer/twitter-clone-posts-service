@@ -21,7 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PostPersistenceAdapterTest {
+class PostPersistenceAdapterTest {
 
     @Mock
     private PostReactiveMongoRepository postReactiveMongoRepository;

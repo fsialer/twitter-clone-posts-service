@@ -6,7 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface PostDataRestMapper {
-    PostData toPostData(CreatePostDataRequest createPostDataRequest);
 
     default PostData toPostData(String userId,CreatePostDataRequest createPostDataRequest){
         return PostData.builder()

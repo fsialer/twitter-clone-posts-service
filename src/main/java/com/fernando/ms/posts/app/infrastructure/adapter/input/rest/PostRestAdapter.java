@@ -119,7 +119,7 @@ public class PostRestAdapter {
     @Operation(summary = "Generate sas url for media")
     @ApiResponse(responseCode ="200", description = "Generated sas url")
     public Flux<PostMediaResponse> generateSasUrl(@Valid @RequestBody CreateMediaRequest rq){
-        return postMediaRestMapper.toPostMediaResponse(postMediaInputPort.generateSasUrl(postMediaRestMapper.toListString(rq)));
+        return postMediaRestMapper.toFluxPostMediaResponse(postMediaInputPort.generateSasUrl(postMediaRestMapper.toListString(rq)));
     }
 
 }

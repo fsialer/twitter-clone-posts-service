@@ -3,7 +3,6 @@ package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
-import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -74,17 +73,6 @@ public class GlobalControllerAdvice {
                 .type(FUNCTIONAL)
                 .message(POST_RULE_EXCEPTION.getMessage())
                 .details(Collections.singletonList(e.getMessage()))
-                .timestamp(LocalDate.now().toString())
-                .build());
-    }
-
-    @ResponseStatus(NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
-    public Mono<ErrorResponse> handleUserNotFoundException() {
-        return Mono.just(ErrorResponse.builder()
-                .code(USER_NOT_FOUND.getCode())
-                .type(FUNCTIONAL)
-                .message(USER_NOT_FOUND.getMessage())
                 .timestamp(LocalDate.now().toString())
                 .build());
     }

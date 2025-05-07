@@ -14,8 +14,8 @@ public interface PostMediaRestMapper {
         return rq.getFilenames();
     }
 
-    default Flux<PostMediaResponse> toPostMediaResponse(Flux<PostMedia> postMedia){
-        return this.toPostMediaResponse(postMedia);
+    default Flux<PostMediaResponse> toFluxPostMediaResponse(Flux<PostMedia> postMedia){
+        return postMedia.map(this::toPostMediaResponse);
     }
 
     PostMediaResponse toPostMediaResponse(PostMedia postMedia);

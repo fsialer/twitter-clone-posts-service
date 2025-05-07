@@ -1,21 +1,16 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence;
 
-import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.domain.models.PostData;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostDataPersistenceMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDataDocument;
-import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.repository.PostDataRepository;
-import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -25,7 +20,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class PostDataPersistenceAdapterTest {
+class PostDataPersistenceAdapterTest {
     @Mock
     private PostDataRepository postDataRepository;
 
