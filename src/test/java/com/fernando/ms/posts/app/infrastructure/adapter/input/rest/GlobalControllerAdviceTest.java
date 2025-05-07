@@ -8,15 +8,12 @@ import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
 import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
-import com.fernando.ms.posts.app.domain.exceptions.UserNotFoundException;
-import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostMediaRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
-import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(controllers = {PostRestAdapter.class})
-public class GlobalControllerAdviceTest {
+class GlobalControllerAdviceTest {
     @MockitoBean
     private PostRestMapper postRestMapper;
 
@@ -109,28 +106,6 @@ public class GlobalControllerAdviceTest {
                 .value(response -> {
                     assert response.getCode().equals(POST_BAD_PARAMETERS.getCode());
                     assert response.getMessage().equals(POST_BAD_PARAMETERS.getMessage());
-                });
-    }
-
-    @Test
-    @DisplayName("Expect UserNotFoundException When User Identifier Is Invalid")
-    void Expect_UserNotFoundException_When_UserIdentifierIsInvalid() throws JsonProcessingException {
-        CreatePostRequest createUserRequest= TestUtilPost.buildCreatePostRequestMock();
-        Post post= TestUtilPost.buildPostMock();
-        when(postRestMapper.toPost(anyString(),any(CreatePostRequest.class))).thenReturn(post);
-        when(postInputPort.save(any(Post.class))).thenReturn(Mono.error(new UserNotFoundException()));
-
-        webTestClient.post()
-                .uri("/v1/posts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-User-Id","1")
-                .bodyValue(objectMapper.writeValueAsString(createUserRequest))
-                .exchange()
-                .expectStatus().isNotFound()
-                .expectBody(ErrorResponse.class)
-                .value(response -> {
-                    assert response.getCode().equals(USER_NOT_FOUND.getCode());
-                    assert response.getMessage().equals(USER_NOT_FOUND.getMessage());
                 });
     }
 

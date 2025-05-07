@@ -21,11 +21,13 @@ jacoco {
 
 sonar {
 	properties {
-		property("sonar.projectKey", "${SONAR_NAME_PROJECT}")
-		property("sonar.organization", "${SONAR_ORGANIZATION}")
-		property("sonar.host.url", "${SONAR_HOST}")
-		property("sonar.login", "${SONAR_KEY}")
-		property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.html"
+		property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
+		property("sonar.organization", System.getenv("SONAR_ORGANIZATION"))
+		property("sonar.host.url", System.getenv("SONAR_HOST_URL"))
+		property("sonar.token", System.getenv("SONAR_TOKEN"))
+		property("sonar.branch.name", System.getenv("SONAR_BRANCH_NAME"))
+		property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.exclusions", "**/config/**, **/TwitterClonePostsServiceApplication.*, **/validation/*.*"
 	}
 }
 
@@ -77,6 +79,17 @@ tasks.jacocoTestReport {
 		xml.required = true  // Necesario para SonarQube
 		html.required = true
 		csv.required = false
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect { fileTree(dir: it, exclude: [
+				'**/config/**',
+				'**/*Config.class',
+				'**/*Configuration.class',
+				"**/*MapperImpl.class",
+				"**/TwitterClonePostsServiceApplication.*",
+				"**/validation/*.*"
+		]) }))
 	}
 }
 

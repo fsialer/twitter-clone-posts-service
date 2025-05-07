@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PostMediaServiceTest {
+class PostMediaServiceTest {
     @Mock
     private PostMediaStoragePort postMediaStoragePort;
 

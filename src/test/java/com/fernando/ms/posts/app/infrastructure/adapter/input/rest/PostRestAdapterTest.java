@@ -17,7 +17,6 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import com.fernando.ms.posts.app.utils.TestUtilPostMedia;
@@ -38,7 +37,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(PostRestAdapter.class)
-public class PostRestAdapterTest {
+class PostRestAdapterTest {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -240,7 +239,7 @@ public class PostRestAdapterTest {
         CreateMediaRequest createMediaRequest = TestUtilPostMedia.builCreateMediaRequest();
 
         when(postMediaInputPort.generateSasUrl(anyList())).thenReturn(Flux.just(postMedia));
-        when(postMediaRestMapper.toPostMediaResponse(any(Flux.class))).thenReturn(Flux.just(postMediaResponse));
+        when(postMediaRestMapper.toFluxPostMediaResponse(any(Flux.class))).thenReturn(Flux.just(postMediaResponse));
 
         webTestClient.post()
                 .uri("/v1/posts/media")
@@ -252,6 +251,6 @@ public class PostRestAdapterTest {
                 .jsonPath("$[0].uploadUrl").isEqualTo(postMedia.getUploadUrl());
 
         Mockito.verify(postMediaInputPort, times(1)).generateSasUrl(anyList());
-        Mockito.verify(postMediaRestMapper, times(1)).toPostMediaResponse(any(Flux.class));
+        Mockito.verify(postMediaRestMapper, times(1)).toFluxPostMediaResponse(any(Flux.class));
     }
 }

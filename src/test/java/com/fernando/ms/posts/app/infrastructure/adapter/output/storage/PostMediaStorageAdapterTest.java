@@ -1,14 +1,11 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.storage;
 
-import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.specialized.BlockBlobClient;
-import com.azure.storage.common.StorageSharedKeyCredential;
 import com.fernando.ms.posts.app.domain.models.PostMedia;
 import com.fernando.ms.posts.app.infrastructure.config.AzureStorageProperties;
-import com.fernando.ms.posts.app.utils.TestUtilPostMedia;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,13 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PostMediaStorageAdapterTest {
+class PostMediaStorageAdapterTest {
     @Mock
     private AzureStorageProperties azureStorageProperties;
 
