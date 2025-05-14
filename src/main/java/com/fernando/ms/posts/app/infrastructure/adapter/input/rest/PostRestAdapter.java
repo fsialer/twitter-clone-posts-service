@@ -1,5 +1,6 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
+import com.azure.core.annotation.QueryParam;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
@@ -11,6 +12,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -121,5 +124,15 @@ public class PostRestAdapter {
     public Flux<PostMediaResponse> generateSasUrl(@Valid @RequestBody CreateMediaRequest rq){
         return postMediaRestMapper.toFluxPostMediaResponse(postMediaInputPort.generateSasUrl(postMediaRestMapper.toListString(rq)));
     }
+
+    @GetMapping("/recent")
+    @Operation(summary = "Find Post recent by user authenticated")
+    @ApiResponse(responseCode ="200", description = "List post recent")
+    public Flux<PostAuthorResponse> findPostRecent(@RequestHeader("X-User-Id") String userId,
+                                                   @QueryParam("page") @DefaultValue("0") int page,
+                                                   @QueryParam("size") @DefaultValue("20")  int size){
+        return postRestMapper.toFluxPostAuthorResponse(postInputPort.recent(userId,page,size));
+    }
+
 
 }

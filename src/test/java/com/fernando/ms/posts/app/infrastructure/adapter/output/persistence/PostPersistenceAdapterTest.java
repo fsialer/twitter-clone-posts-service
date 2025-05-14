@@ -1,9 +1,11 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.output.persistence;
 
+import com.fernando.ms.posts.app.domain.models.Author;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.mapper.PostPersistenceMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.repository.PostReactiveMongoRepository;
+import com.fernando.ms.posts.app.utils.TestUtilAuthor;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,9 +18,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PostPersistenceAdapterTest {
@@ -106,5 +109,26 @@ class PostPersistenceAdapterTest {
                 .verifyComplete();
 
         Mockito.verify(postReactiveMongoRepository, times(1)).existsById(anyString());
+    }
+
+    @Test
+    @DisplayName("When ExistsAuthors And Page Size Expect Correct Posts List")
+    void When_ExistsAuthorsAndPapageSize_Expect_CorrectPostsList() {
+        Author author = TestUtilAuthor.buildAuthorMock();
+        Post post = TestUtilPost.buildPostMock();
+        PostDocument postDocument = TestUtilPost.buildPostDocumentMock();
+
+        when(postReactiveMongoRepository.findPostByAuthorsAndPagination(anyList(), anyInt(), anyInt()))
+                .thenReturn(Flux.just(postDocument));
+        when(postPersistenceMapper.toPosts(any(Flux.class)))
+                .thenReturn(Flux.just(post));
+
+        Flux<Post> result = postPersistenceAdapter.recent(List.of(author), 0, 10);
+
+        StepVerifier.create(result)
+                .expectNext(post)
+                .verifyComplete();
+        verify(postReactiveMongoRepository,times(1)).findPostByAuthorsAndPagination(anyList(), anyInt(), anyInt());
+        verify(postPersistenceMapper,times(1)).toPosts(any(Flux.class));
     }
 }

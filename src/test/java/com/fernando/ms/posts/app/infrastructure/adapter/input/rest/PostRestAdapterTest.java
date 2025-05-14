@@ -15,6 +15,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
@@ -252,5 +253,32 @@ class PostRestAdapterTest {
 
         Mockito.verify(postMediaInputPort, times(1)).generateSasUrl(anyList());
         Mockito.verify(postMediaRestMapper, times(1)).toFluxPostMediaResponse(any(Flux.class));
+    }
+
+    @Test
+    @DisplayName("When UserId Is Valid Expect List All Post Recents")
+    void When_UserIdIsValid_Expect_ListAllPostRecents() {
+        PostAuthorResponse postAuthorResponse = TestUtilPost.buildPostAuthorResponseMock();
+        Post post=TestUtilPost.buildPostMock();
+
+        when(postInputPort.recent(anyString(),anyInt(),anyInt())).thenReturn(Flux.just(post));
+        when(postRestMapper.toFluxPostAuthorResponse(any(Flux.class))).thenReturn(Flux.just(postAuthorResponse));
+
+        webTestClient.get()
+                .uri( uriBuilder -> uriBuilder
+                        .path("/v1/posts/recent")
+                        .queryParam("page","1")
+                        .queryParam("size","25")
+                        .build()
+                )
+                .header("X-User-Id","1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$[0].id").isEqualTo(postAuthorResponse.id())
+                .jsonPath("$[0].content").isEqualTo(postAuthorResponse.content());
+
+        Mockito.verify(postInputPort, times(1)).recent(anyString(),anyInt(),anyInt());
+        Mockito.verify(postRestMapper, times(1)).toFluxPostAuthorResponse(any(Flux.class));
     }
 }

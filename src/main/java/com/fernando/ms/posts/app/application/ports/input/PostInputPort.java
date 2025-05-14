@@ -11,4 +11,5 @@ public interface PostInputPort {
     Mono<Post> update(String id,Post post);
     Mono<Void> delete(String id);
     Mono<Boolean> verify(String id);
+    Flux<Post> recent(String userId,int page,int size);
 }

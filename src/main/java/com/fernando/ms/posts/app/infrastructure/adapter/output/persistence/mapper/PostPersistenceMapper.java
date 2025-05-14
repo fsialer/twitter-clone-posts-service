@@ -29,6 +29,7 @@ public interface PostPersistenceMapper {
         return PostDocument.builder()
                 .id(post.getId())
                 .content(post.getContent())
+                .datePost(post.getDatePost())
                 .userId(post.getUserId())
                 .createdAt(mapCreatedAt())
                 .updatedAt(mapUpdatedAt())

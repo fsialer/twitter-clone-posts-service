@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
-import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
-import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
-import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
+import com.fernando.ms.posts.app.domain.exceptions.*;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostDataRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostMediaRestMapper;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper.PostRestMapper;
@@ -23,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.fernando.ms.posts.app.infrastructure.utils.ErrorCatalog.*;
@@ -147,6 +146,32 @@ class GlobalControllerAdviceTest {
                 });
 
         Mockito.verify(postDataInputPort, times(1)).delete(postDataId);
+    }
+
+    @Test
+    @DisplayName("Expect FallBackException When Service User Is Not Available")
+    void Expect_FallBackException_When_ServiceUserIsNotAvailable() {
+        when(postRestMapper.toFluxPostAuthorResponse(any(Flux.class))).thenReturn(Flux.empty());
+        when(postInputPort.recent(anyString(), anyInt(), anyInt())).thenThrow(new UserFallBackException());
+
+        webTestClient.get()
+                .uri( uriBuilder -> uriBuilder
+                        .path("/v1/posts/recent")
+                        .queryParam("page","1")
+                        .queryParam("size","25")
+                        .build()
+                )
+                .header("X-User-Id","1")
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assert response.getCode().equals(USERS_SERVICES_FAIL.getCode());
+                    assert response.getMessage().equals(USERS_SERVICES_FAIL.getMessage());
+                });
+
+        Mockito.verify(postInputPort, times(1)).recent(anyString(),anyInt(),anyInt());
+        Mockito.verify(postRestMapper, times(0)).toFluxPostAuthorResponse(any(Flux.class));
     }
 
 

@@ -1,14 +1,12 @@
 package com.fernando.ms.posts.app.utils;
 
+import com.fernando.ms.posts.app.domain.models.Author;
 import com.fernando.ms.posts.app.domain.models.Media;
 import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostUserResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.UserResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.*;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostDocument;
 import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.models.PostMedia;
 
@@ -27,6 +25,11 @@ public class TestUtilPost {
                         .type("IMAGE")
                         .url("https://<storage>.blob.core.windows.net/posts/imagen.jpg")
                         .build()))
+                .author(Author.builder()
+                        .id("5d4d75sd4sd6sd")
+                        .names("Fernando")
+                        .lastNames("Sialer")
+                        .build())
                 .build();
     }
 
@@ -60,6 +63,7 @@ public class TestUtilPost {
                                 .type("IMAGE")
                                 .url("https://<storage>.blob.core.windows.net/posts/imagen.jpg")
                         .build()))
+                .datePost(LocalDateTime.now())
                 .build();
     }
 
@@ -86,4 +90,15 @@ public class TestUtilPost {
                         .build())
                 .build();
     }
+
+    public static PostAuthorResponse buildPostAuthorResponseMock(){
+        return PostAuthorResponse.builder()
+                .id("67894256c864356454574770")
+                .content("Hello everybody")
+                .datePost(LocalDateTime.now())
+                .author("Fernando Alexis")
+                .build();
+    }
+
+
 }

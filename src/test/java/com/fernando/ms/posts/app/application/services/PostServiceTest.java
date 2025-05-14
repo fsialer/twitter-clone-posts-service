@@ -1,8 +1,11 @@
 package com.fernando.ms.posts.app.application.services;
 
+import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.models.Author;
 import com.fernando.ms.posts.app.domain.models.Post;
+import com.fernando.ms.posts.app.utils.TestUtilAuthor;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -25,6 +30,9 @@ class PostServiceTest {
 
     @InjectMocks
     private PostService postService;
+
+    @Mock
+    private ExternalUserOutputPort externalUserOutputPort;
 
     @Test
     @DisplayName("When Posts Information Is Correct Expect A List Posts")
@@ -164,5 +172,33 @@ class PostServiceTest {
                 .verifyComplete();
 
         Mockito.verify(postPersistencePort, times(1)).verify(anyString());
+    }
+
+    @Test
+    @DisplayName("when User Authenticated Had UserFollowed Expect List Posts Recents")
+    void when_UserAuthenticatedHadUserFollowed_Expect_ListPostsRecents() {
+        String userId = "user123";
+        int page = 0;
+        int size = 10;
+
+        Author author1 = TestUtilAuthor.buildAuthorMock();
+        author1.setId("d44d5d7sd5sd4s5d");
+
+        Post post1 = TestUtilPost.buildPostMock();
+        post1.setUserId("d44d5d7sd5sd4s5d");
+
+        when(externalUserOutputPort.findAuthorByUserId(userId))
+                .thenReturn(Flux.just(author1));
+
+        when(postPersistencePort.recent(List.of(author1), page, size))
+                .thenReturn(Flux.just(post1));
+
+        Flux<Post> result =postService.recent(userId, page, size);
+        StepVerifier.create(result)
+                .expectNextMatches(post -> post.getAuthor().equals(author1))
+                .verifyComplete();
+
+        verify(externalUserOutputPort).findAuthorByUserId(userId);
+        verify(postPersistencePort).recent(List.of(author1),page, size);
     }
 }

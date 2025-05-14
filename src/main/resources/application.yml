@@ -14,7 +14,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, metrics, info, prometheus
+        include: health, metrics, info, prometheus, circuitbreakers
     endpoint:
       prometheus:
         enabled: true
@@ -25,10 +25,6 @@ management:
       export:
         prometheus:
           enabled: true
-followers-service:
-  url: ${FOLLOWERS_URL:http://localhost:8084/v1/followers}
-users-service:
-  url: ${USERS_URL:http://localhost:8080/v1/users}
 azure:
   storage:
     account-name: ${AZURE_STORAGE_ACCOUNT_NAME:test_account}
@@ -53,3 +49,17 @@ springdoc:
         title: Twitter Clone Posts Service API
         version: 1.0.0
         description: API documentation for the Twitter Clone Posts Service
+services:
+  url:
+    users-service: ${USERS_URL:http://localhost:8080/v1/users}
+resilience4j:
+  circuitbreaker:
+    instances:
+      usersServiceCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
