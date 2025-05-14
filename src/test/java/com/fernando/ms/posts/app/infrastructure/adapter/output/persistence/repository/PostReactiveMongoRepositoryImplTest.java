@@ -30,8 +30,8 @@ class PostReactiveMongoRepositoryImplTest {
     private PostReactiveMongoRepositoryImpl postReactiveMongoRepository;
 
     @Test
-    @DisplayName("When Find Post By Authors And Pagination_ Expect List Of Documents")
-    void When_FindPostByAuthorsAndPagination_Expect_ListOfDocuments() {
+    @DisplayName("When Find Post By Authors And Pagination_ Expect List Of Posts")
+    void When_FindPostByAuthorsAndPagination_Expect_ListOfPosts() {
         Author author1 = TestUtilAuthor.buildAuthorMock();
         Author author2 = TestUtilAuthor.buildAuthorMock();
         author2.setId("4d786ds8sd56sd");
@@ -46,6 +46,25 @@ class PostReactiveMongoRepositoryImplTest {
                 .thenReturn(Flux.just(postDocument1, postDocument2));
 
         Flux<PostDocument> result = postReactiveMongoRepository.findPostByAuthorsAndPagination(List.of(author1, author2), 1, 10);
+
+        StepVerifier.create(result)
+                .expectNext(postDocument1)
+                .expectNext(postDocument2)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("When Find Post By UserId And Pagination Expect List Of Posts")
+    void When_FindPostByUserIdAndPagination_Expect_ListOfPosts() {
+        PostDocument postDocument1 = TestUtilPost.buildPostDocumentMock();
+        PostDocument postDocument2 = TestUtilPost.buildPostDocumentMock();
+        postDocument2.setId("d854gorfd4");
+        postDocument2.setContent("contenido 2");
+
+        when(reactiveMongoTemplate.find(any(Query.class), any(Class.class)))
+                .thenReturn(Flux.just(postDocument1, postDocument2));
+
+        Flux<PostDocument> result = postReactiveMongoRepository.findAllByUserIdAndPagination("4d786ds8sd56sd", 1, 10);
 
         StepVerifier.create(result)
                 .expectNext(postDocument1)

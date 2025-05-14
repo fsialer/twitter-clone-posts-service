@@ -32,4 +32,13 @@ public class PostReactiveMongoRepositoryImpl implements PostReactiveMongoReposit
                 .limit(size);
         return reactiveMongoTemplate.find(query, PostDocument.class);
     }
+
+    @Override
+    public Flux<PostDocument> findAllByUserIdAndPagination(String userId, int page, int size) {
+        Query query=new Query(Criteria.where("userId").is(userId));
+        query.with(Sort.by(Sort.Direction.DESC,"datePost"))
+                .skip((long) (page-1)*size)
+                .limit(size);
+        return reactiveMongoTemplate.find(query, PostDocument.class);
+    }
 }

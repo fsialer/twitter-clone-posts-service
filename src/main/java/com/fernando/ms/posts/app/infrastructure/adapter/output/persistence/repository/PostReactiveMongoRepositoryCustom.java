@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PostReactiveMongoRepositoryCustom {
     Flux<PostDocument> findPostByAuthorsAndPagination(List<Author> authors, int page, int size);
+    Flux<PostDocument> findAllByUserIdAndPagination(String userId, int page, int size);
 }

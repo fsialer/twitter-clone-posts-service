@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,6 +88,56 @@ class UserWebClientImplTest {
         userWebClientImpl = new UserWebClientImpl(circuitBreakerRegistry, webClientBuilder, serviceProperties);
 
         StepVerifier.create(userWebClientImpl.findFollowedByFollowerId(followerId))
+                .expectError(UserFallBackException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("When Service User Find Me Is Available Expect An User")
+    void When_ServiceUserFindMe_Expect_AnUser(){
+        String userId = "123";
+        UserResponse userResponse = TestUtilUser.buildUserResponseMock();
+
+        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClient);
+        Mockito.<WebClient.RequestHeadersUriSpec<?>>when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        Mockito.<WebClient.RequestHeadersSpec<?>>when(requestHeadersUriSpec.uri("/me")).thenReturn(requestHeadersSpec);
+        Mockito.<WebClient.RequestHeadersSpec<?>>when(requestHeadersSpec.header("X-User-Id", userId)).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(UserResponse.class)).thenReturn(Mono.just(userResponse));
+        when(serviceProperties.getUsersService()).thenReturn("http://fake-url");
+
+        circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
+
+        userWebClientImpl = new UserWebClientImpl(circuitBreakerRegistry, webClientBuilder, serviceProperties);
+
+        Mono<UserResponse> result = userWebClientImpl.findByUserId(userId);
+        StepVerifier.create(result)
+                .consumeNextWith(user->{
+                    assertEquals(user.id(),userResponse.id());
+                    assertEquals(user.names(),userResponse.names());
+                    assertEquals(user.lastNames(),userResponse.lastNames());
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Expect FallBackException When Service User Find Me Is Not Available")
+    void Expect_FallBackException_When_ServiceUserFindMeIsNotAvailable(){
+        String userId = "123";
+        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClient);
+        Mockito.<WebClient.RequestHeadersUriSpec<?>>when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        Mockito.<WebClient.RequestHeadersSpec<?>>when(requestHeadersUriSpec.uri("/me")).thenReturn(requestHeadersSpec);
+        Mockito.<WebClient.RequestHeadersSpec<?>>when(requestHeadersSpec.header("X-User-Id", userId)).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(UserResponse.class)).thenReturn(Mono.error(new UserFallBackException()));
+        when(serviceProperties.getUsersService()).thenReturn("http://fake-url");
+
+        circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
+        userWebClientImpl = new UserWebClientImpl(circuitBreakerRegistry, webClientBuilder, serviceProperties);
+
+        StepVerifier.create(userWebClientImpl.findByUserId(userId))
                 .expectError(UserFallBackException.class)
                 .verify();
     }

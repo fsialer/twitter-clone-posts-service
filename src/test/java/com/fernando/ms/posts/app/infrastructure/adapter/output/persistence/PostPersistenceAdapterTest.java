@@ -131,4 +131,24 @@ class PostPersistenceAdapterTest {
         verify(postReactiveMongoRepository,times(1)).findPostByAuthorsAndPagination(anyList(), anyInt(), anyInt());
         verify(postPersistenceMapper,times(1)).toPosts(any(Flux.class));
     }
+
+    @Test
+    @DisplayName("When UserId And Pagination Expect List Post Correct")
+    void When_UserIdAndPagination_Expect_ListPostCorrect() {
+        Post post = TestUtilPost.buildPostMock();
+        PostDocument postDocument = TestUtilPost.buildPostDocumentMock();
+
+        when(postReactiveMongoRepository.findAllByUserIdAndPagination(anyString(), anyInt(), anyInt()))
+                .thenReturn(Flux.just(postDocument));
+        when(postPersistenceMapper.toPosts(any(Flux.class)))
+                .thenReturn(Flux.just(post));
+
+        Flux<Post> result = postPersistenceAdapter.me("d68sdg5h698d5", 1, 10);
+
+        StepVerifier.create(result)
+                .expectNext(post)
+                .verifyComplete();
+        verify(postReactiveMongoRepository,times(1)).findAllByUserIdAndPagination(anyString(), anyInt(), anyInt());
+        verify(postPersistenceMapper,times(1)).toPosts(any(Flux.class));
+    }
 }

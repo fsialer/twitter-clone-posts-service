@@ -10,6 +10,7 @@ import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOper
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 //@RequiredArgsConstructor
 @Component
@@ -32,5 +33,17 @@ public class UserWebClientImpl implements UserWebClient {
                         .bodyToFlux(UserResponse.class)
                         .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
                         .onErrorResume(throwable -> Flux.error(new UserFallBackException()));
+    }
+
+    @Override
+    public Mono<UserResponse> findByUserId(String userId) {
+        return webClient
+                .get()
+                .uri("/me")
+                .header("X-User-Id",userId)
+                .retrieve()
+                .bodyToMono(UserResponse.class)
+                .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+                .onErrorResume(throwable -> Mono.error(new UserFallBackException()));
     }
 }

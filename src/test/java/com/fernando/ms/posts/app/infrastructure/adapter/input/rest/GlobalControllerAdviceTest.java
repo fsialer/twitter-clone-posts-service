@@ -174,5 +174,31 @@ class GlobalControllerAdviceTest {
         Mockito.verify(postRestMapper, times(0)).toFluxPostAuthorResponse(any(Flux.class));
     }
 
+    @Test
+    @DisplayName("Expect AuthorNotFoundException When Service User Is Not Available")
+    void Expect_AuthorNotFoundException_When_ServiceUserIsNotAvailable() {
+        when(postRestMapper.toFluxPostAuthorResponse(any(Flux.class))).thenReturn(Flux.empty());
+        when(postInputPort.me(anyString(), anyInt(), anyInt())).thenThrow(new AuthorNotFoundException());
+
+        webTestClient.get()
+                .uri( uriBuilder -> uriBuilder
+                        .path("/v1/posts/me")
+                        .queryParam("page","1")
+                        .queryParam("size","25")
+                        .build()
+                )
+                .header("X-User-Id","1")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assert response.getCode().equals(AUTHOR_NOT_FOUND.getCode());
+                    assert response.getMessage().equals(AUTHOR_NOT_FOUND.getMessage());
+                });
+
+        Mockito.verify(postInputPort, times(1)).me(anyString(),anyInt(),anyInt());
+        Mockito.verify(postRestMapper, times(0)).toFluxPostAuthorResponse(any(Flux.class));
+    }
+
 
 }

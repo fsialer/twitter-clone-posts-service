@@ -46,4 +46,9 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     public Flux<Post> recent(List<Author> authors, int page, int size) {
         return postPersistenceMapper.toPosts(postReactiveMongoRepository.findPostByAuthorsAndPagination(authors,page,size));
     }
+
+    @Override
+    public Flux<Post> me(String userId, int page, int size) {
+        return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAllByUserIdAndPagination(userId,page,size));
+    }
 }

@@ -2,6 +2,7 @@ package com.fernando.ms.posts.app.application.services;
 
 import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
+import com.fernando.ms.posts.app.domain.exceptions.AuthorNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Author;
 import com.fernando.ms.posts.app.domain.models.Post;
@@ -200,5 +201,58 @@ class PostServiceTest {
 
         verify(externalUserOutputPort).findAuthorByUserId(userId);
         verify(postPersistencePort).recent(List.of(author1),page, size);
+    }
+
+    @Test
+    @DisplayName("when User Authenticated Had UserFollowed Expect List Posts me")
+    void when_UserAuthenticatedHadUserFollowed_Expect_ListPostsMe() {
+        String userId = "user123";
+        int page = 0;
+        int size = 10;
+
+        Author author1 = TestUtilAuthor.buildAuthorMock();
+        author1.setId("d44d5d7sd5sd4s5d");
+
+        Post post1 = TestUtilPost.buildPostMock();
+        post1.setUserId("d44d5d7sd5sd4s5d");
+
+        when(externalUserOutputPort.me(userId))
+                .thenReturn(Mono.just(author1));
+
+        when(postPersistencePort.me(userId, page, size))
+                .thenReturn(Flux.just(post1));
+
+        Flux<Post> result =postService.me(userId, page, size);
+        StepVerifier.create(result)
+                .expectNextMatches(post -> post.getAuthor().equals(author1))
+                .verifyComplete();
+
+        verify(externalUserOutputPort).me(userId);
+        verify(postPersistencePort).me(userId,page, size);
+    }
+
+    @Test
+    @DisplayName("Expect AuthorNotFoundException When UserId Is Not Invalid")
+    void Expect_AuthorNotFoundException_When_UserIdIsNotInvalid() {
+        String userId = "user123";
+        int page = 0;
+        int size = 10;
+
+        Author author1 = TestUtilAuthor.buildAuthorMock();
+        author1.setId("d44d5d7sd5sd4s5d");
+
+        Post post1 = TestUtilPost.buildPostMock();
+        post1.setUserId("d44d5d7sd5sd4s5d");
+
+        when(externalUserOutputPort.me(userId))
+                .thenReturn(Mono.empty());
+
+        Flux<Post> result =postService.me(userId, page, size);
+        StepVerifier.create(result)
+                .expectError(AuthorNotFoundException.class)
+                .verify();
+
+        verify(externalUserOutputPort,times(1)).me(userId);
+        verify(postPersistencePort,times(0)).me(userId,page, size);
     }
 }

@@ -134,5 +134,14 @@ public class PostRestAdapter {
         return postRestMapper.toFluxPostAuthorResponse(postInputPort.recent(userId,page,size));
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Find Post recent by user authenticated")
+    @ApiResponse(responseCode ="200", description = "List post recent")
+    public Flux<PostAuthorResponse> findPostMe(@RequestHeader("X-User-Id") String userId,
+                                                   @QueryParam("page") @DefaultValue("0") int page,
+                                                   @QueryParam("size") @DefaultValue("20")  int size){
+        return postRestMapper.toFluxPostAuthorResponse(postInputPort.me(userId,page,size));
+    }
+
 
 }

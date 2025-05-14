@@ -7,6 +7,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.output.restclient.mapper
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -16,5 +17,10 @@ public class UserRestClientAdapter implements ExternalUserOutputPort {
     @Override
     public Flux<Author> findAuthorByUserId(String userId) {
         return authorRestClientMapper.toFluxAuthor(userWebClient.findFollowedByFollowerId(userId));
+    }
+
+    @Override
+    public Mono<Author> me(String userId) {
+        return authorRestClientMapper.toMonoAuthor(userWebClient.findByUserId(userId));
     }
 }

@@ -14,4 +14,5 @@ public interface PostPersistencePort {
     Mono<Void> delete(String id);
     Mono<Boolean> verify(String id);
     Flux<Post> recent(List<Author> authors,int page, int size);
+    Flux<Post> me(String userId,int page, int size);
 }

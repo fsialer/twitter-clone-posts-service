@@ -3,6 +3,7 @@ package com.fernando.ms.posts.app.application.services;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
+import com.fernando.ms.posts.app.domain.exceptions.AuthorNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,17 @@ public class PostService implements PostInputPort {
                             return Flux.just(post);
                             }
                         )
+                );
+    }
+
+    @Override
+    public Flux<Post> me(String userId, int page, int size) {
+        return externalUserOutputPort.me(userId)
+                .switchIfEmpty(Mono.error(AuthorNotFoundException::new))
+                .flatMapMany(author->
+                        postPersistencePort.me(userId,page,size)
+                            .doOnNext(post -> post.setAuthor(author)
+                            )
                 );
     }
 }

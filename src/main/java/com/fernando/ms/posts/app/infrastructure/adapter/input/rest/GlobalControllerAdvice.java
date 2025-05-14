@@ -74,6 +74,17 @@ public class GlobalControllerAdvice {
                 .build());
     }
 
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public Mono<ErrorResponse> handleAuthorNotFoundException() {
+        return Mono.just(ErrorResponse.builder()
+                .code(AUTHOR_NOT_FOUND.getCode())
+                .type(FUNCTIONAL)
+                .message(AUTHOR_NOT_FOUND.getMessage())
+                .timestamp(LocalDate.now().toString())
+                .build());
+    }
+
     @ExceptionHandler(UserFallBackException.class)
     @ResponseStatus(SERVICE_UNAVAILABLE)
     public Mono<ErrorResponse> handleFallBackException(UserFallBackException e){
@@ -98,6 +109,4 @@ public class GlobalControllerAdvice {
                 .timestamp(LocalDate.now().toString())
                 .build());
     }
-
-
 }

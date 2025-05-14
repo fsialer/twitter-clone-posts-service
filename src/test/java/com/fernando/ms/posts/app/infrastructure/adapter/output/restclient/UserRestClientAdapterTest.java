@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,4 +55,27 @@ class UserRestClientAdapterTest {
         Mockito.verify(userWebClient,times(1)).findFollowedByFollowerId(anyString());
         Mockito.verify(authorRestClientMapper,times(1)).toFluxAuthor(any(Flux.class));
     }
+
+    @Test
+    @DisplayName("When Service User Is Available Expect An User")
+    void When_ServiceUserIsAvailable_Expect_AnUser(){
+        UserResponse userResponse=TestUtilUser.buildUserResponseMock();
+        Author authorMock= TestUtilAuthor.buildAuthorMock();
+        when(userWebClient.findByUserId(anyString())).thenReturn(Mono.just(userResponse));
+        when(authorRestClientMapper.toMonoAuthor(any(Mono.class))).thenReturn(Mono.just(authorMock));
+
+        Mono<Author> authorMono=userRestClientAdapter.me("556621d65s26d");
+
+        StepVerifier.create(authorMono)
+                .consumeNextWith(author -> {
+                    assertEquals(author.getId(),authorMock.getId());
+                    assertEquals(author.getNames(),authorMock.getNames());
+                    assertEquals(author.getLastNames(),authorMock.getLastNames());
+                })
+                .verifyComplete();
+        Mockito.verify(userWebClient,times(1)).findByUserId(anyString());
+        Mockito.verify(authorRestClientMapper,times(1)).toMonoAuthor(any(Mono.class));
+    }
+
+
 }
