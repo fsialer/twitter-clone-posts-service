@@ -1,6 +1,5 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
-import com.azure.core.annotation.QueryParam;
 import com.fernando.ms.posts.app.application.ports.input.PostDataInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
 import com.fernando.ms.posts.app.application.ports.input.PostMediaInputPort;
@@ -129,8 +128,8 @@ public class PostRestAdapter {
     @Operation(summary = "Find Post recent by user authenticated")
     @ApiResponse(responseCode ="200", description = "List post recent")
     public Flux<PostAuthorResponse> findPostRecent(@RequestHeader("X-User-Id") String userId,
-                                                   @QueryParam("page") @DefaultValue("0") int page,
-                                                   @QueryParam("size") @DefaultValue("20")  int size){
+                                                   @RequestParam("page") @DefaultValue("0") int page,
+                                                   @RequestParam("size") @DefaultValue("20")  int size){
         return postRestMapper.toFluxPostAuthorResponse(postInputPort.recent(userId,page,size));
     }
 
@@ -138,8 +137,8 @@ public class PostRestAdapter {
     @Operation(summary = "Find Post recent by user authenticated")
     @ApiResponse(responseCode ="200", description = "List post recent")
     public Flux<PostAuthorResponse> findPostMe(@RequestHeader("X-User-Id") String userId,
-                                                   @QueryParam("page") @DefaultValue("0") int page,
-                                                   @QueryParam("size") @DefaultValue("20")  int size){
+                                                   @RequestParam("page") @DefaultValue("0") int page,
+                                                   @RequestParam("size") @DefaultValue("20")  int size){
         return postRestMapper.toFluxPostAuthorResponse(postInputPort.me(userId,page,size));
     }
 

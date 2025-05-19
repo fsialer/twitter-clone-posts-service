@@ -19,7 +19,6 @@ public class CreatePostRequest {
     @NotBlank(message = "Field content cannot be null or blank")
     private String content;
     @Valid
-    @NotEmpty(message = "Field media cannot be null or empty")
     private Set<MediaRequest> media;
     @NotNull(message = "Field datePost cannot be null")
     private LocalDateTime datePost;
