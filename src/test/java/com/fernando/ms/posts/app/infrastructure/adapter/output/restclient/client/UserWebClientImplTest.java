@@ -111,7 +111,7 @@ class UserWebClientImplTest {
 
         userWebClientImpl = new UserWebClientImpl(circuitBreakerRegistry, webClientBuilder, serviceProperties);
 
-        Mono<UserResponse> result = userWebClientImpl.findByUserId(userId);
+        Mono<UserResponse> result = userWebClientImpl.me(userId);
         StepVerifier.create(result)
                 .consumeNextWith(user->{
                     assertEquals(user.id(),userResponse.id());
@@ -137,7 +137,7 @@ class UserWebClientImplTest {
         circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
         userWebClientImpl = new UserWebClientImpl(circuitBreakerRegistry, webClientBuilder, serviceProperties);
 
-        StepVerifier.create(userWebClientImpl.findByUserId(userId))
+        StepVerifier.create(userWebClientImpl.me(userId))
                 .expectError(UserFallBackException.class)
                 .verify();
     }

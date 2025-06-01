@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface ExternalUserOutputPort {
     Flux<Author> findAuthorByUserId(String userId);
-    Mono<Author> me(String userId);
+    Mono<Author> findByUserId(String userId);
 }

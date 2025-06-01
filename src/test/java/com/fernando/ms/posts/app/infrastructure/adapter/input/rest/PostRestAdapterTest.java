@@ -87,10 +87,10 @@ class PostRestAdapterTest {
     @Test
     @DisplayName("When Post Identifier Is Correct Expect Post Information Successfully")
     void When_PostIdentifierIsCorrect_Expect_PostInformationSuccessfully() {
-        PostResponse postResponse = TestUtilPost.buildPostResponseMock();
+        PostAuthorResponse postAuthorResponse = TestUtilPost.buildPostAuthorResponseMock();
         Post post = TestUtilPost.buildPostMock();
         when(postInputPort.findById(anyString())).thenReturn(Mono.just(post));
-        when(postRestMapper.toPostResponse(any(Post.class))).thenReturn(postResponse);
+        when(postRestMapper.toPostAuthorResponse(any(Post.class))).thenReturn(postAuthorResponse);
         webTestClient.get()
                 .uri("/v1/posts/{id}",1L)
                 .exchange()
@@ -99,7 +99,7 @@ class PostRestAdapterTest {
                 .jsonPath("$.content").isEqualTo("Hello everybody");
 
        Mockito.verify(postInputPort,times(1)).findById(anyString());
-        Mockito.verify(postRestMapper,times(1)).toPostResponse(any(Post.class));
+       Mockito.verify(postRestMapper,times(1)).toPostAuthorResponse(any(Post.class));
     }
 
     @Test
