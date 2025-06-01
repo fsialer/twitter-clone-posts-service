@@ -100,5 +100,11 @@ public class TestUtilPost {
                 .build();
     }
 
+    public static CountPostResponse buildCountPostResponse(){
+        return CountPostResponse.builder()
+                .count(2L)
+                .build();
+    }
+
 
 }

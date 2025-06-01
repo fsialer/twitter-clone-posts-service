@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Set;
@@ -22,11 +23,12 @@ import java.util.stream.Collectors;
 public class PostReactiveMongoRepositoryImpl implements PostReactiveMongoRepositoryCustom{
 
     private final ReactiveMongoTemplate reactiveMongoTemplate;
+    private static final String ATTRIBUTE_USERID="userId";
 
     @Override
     public Flux<PostDocument> findPostByAuthorsAndPagination(List<Author> authors, int page, int size) {
         Set<String>ids=authors.stream().map(Author::getId).collect(Collectors.toSet());
-        Query query=new Query(Criteria.where("userId").in(ids.stream().toList()));
+        Query query=new Query(Criteria.where(ATTRIBUTE_USERID).in(ids.stream().toList()));
         query.with(Sort.by(Sort.Direction.DESC,"datePost"))
                 .skip((long) (page-1)*size)
                 .limit(size);
@@ -35,10 +37,16 @@ public class PostReactiveMongoRepositoryImpl implements PostReactiveMongoReposit
 
     @Override
     public Flux<PostDocument> findAllByUserIdAndPagination(String userId, int page, int size) {
-        Query query=new Query(Criteria.where("userId").is(userId));
+        Query query=new Query(Criteria.where(ATTRIBUTE_USERID).is(userId));
         query.with(Sort.by(Sort.Direction.DESC,"datePost"))
                 .skip((long) (page-1)*size)
                 .limit(size);
         return reactiveMongoTemplate.find(query, PostDocument.class);
+    }
+
+    @Override
+    public Mono<Long> countPostByUserId(String userId) {
+        Query query=new Query(Criteria.where(ATTRIBUTE_USERID).is(userId));
+        return reactiveMongoTemplate.count(query,PostDocument.class);
     }
 }

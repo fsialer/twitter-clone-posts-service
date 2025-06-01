@@ -151,4 +151,16 @@ class PostPersistenceAdapterTest {
         verify(postReactiveMongoRepository,times(1)).findAllByUserIdAndPagination(anyString(), anyInt(), anyInt());
         verify(postPersistenceMapper,times(1)).toPosts(any(Flux.class));
     }
+
+    @Test
+    @DisplayName("When UserId Exits Expect Count Post By User")
+    void When_UserIdExists_Expect_CountPostByUser(){
+        when(postReactiveMongoRepository.countPostByUserId(anyString())).thenReturn(Mono.just(2L));
+        Mono<Long> result=postPersistenceAdapter.countPostByUser("1");
+
+        StepVerifier.create(result)
+                .expectNext(2L)
+                .verifyComplete();
+        verify(postReactiveMongoRepository,times(1)).countPostByUserId(anyString());
+    }
 }

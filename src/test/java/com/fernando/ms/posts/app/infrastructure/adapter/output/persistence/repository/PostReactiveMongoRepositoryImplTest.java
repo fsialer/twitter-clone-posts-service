@@ -13,12 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PostReactiveMongoRepositoryImplTest {
@@ -70,5 +71,23 @@ class PostReactiveMongoRepositoryImplTest {
                 .expectNext(postDocument1)
                 .expectNext(postDocument2)
                 .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("When UserId Exists Expect Count Post By UserId")
+    void When_UserIdExists_Expect_CountPostByUserId(){
+        String userId = "user123";
+        Long expectedCount = 5L;
+
+        when(reactiveMongoTemplate.count(any(Query.class), eq(PostDocument.class)))
+                .thenReturn(Mono.just(expectedCount));
+
+        Mono<Long> result = postReactiveMongoRepository.countPostByUserId(userId);
+
+        StepVerifier.create(result)
+                .expectNext(expectedCount)
+                .verifyComplete();
+
+        verify(reactiveMongoTemplate, times(1)).count(any(Query.class), eq(PostDocument.class));
     }
 }

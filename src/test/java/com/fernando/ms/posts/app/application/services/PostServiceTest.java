@@ -258,4 +258,14 @@ class PostServiceTest {
         verify(externalUserOutputPort,times(1)).findByUserId(userId);
         verify(postPersistencePort,times(0)).me(userId,page, size);
     }
+
+    @Test
+    @DisplayName("When User Exists Expect Count Post Published")
+    void When_UserExists_Expect_CountPostPublished(){
+        when(postPersistencePort.countPostByUser(anyString())).thenReturn(Mono.just(2L));
+        Mono<Long> result=postService.countPostByUser("1");
+        StepVerifier.create(result)
+                .expectNext(2L)
+                .verifyComplete();
+    }
 }

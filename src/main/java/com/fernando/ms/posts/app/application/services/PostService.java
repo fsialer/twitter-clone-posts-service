@@ -5,7 +5,6 @@ import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.AuthorNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
-import com.fernando.ms.posts.app.domain.models.Author;
 import com.fernando.ms.posts.app.domain.models.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,5 +90,10 @@ public class PostService implements PostInputPort {
                             .doOnNext(post -> post.setAuthor(author)
                             )
                 );
+    }
+
+    @Override
+    public Mono<Long> countPostByUser(String userId) {
+        return postPersistencePort.countPostByUser(userId);
     }
 }

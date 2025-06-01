@@ -5,6 +5,7 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Set;
@@ -113,7 +115,16 @@ class PostRestMapperTest {
         assertEquals(postAuthorResponse.id(),post.getId());
         assertEquals(postAuthorResponse.content(),post.getContent());
         assertEquals(postAuthorResponse.author(),post.getAuthor().getNames().concat(" ").concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames()).trim());
+    }
 
-
+    @Test
+    @DisplayName("When Mapping Long Expect MonoCountPostResponse")
+    void When_MappingLong_Expect_MonoCountPostResponse(){
+        Mono<CountPostResponse> countPostResponse=postRestMapper.toCountPostResponse(2L);
+        StepVerifier.create(countPostResponse)
+                .consumeNextWith(countPost->{
+                    assertEquals(2L, countPost.count());
+                })
+                .verifyComplete();
     }
 }

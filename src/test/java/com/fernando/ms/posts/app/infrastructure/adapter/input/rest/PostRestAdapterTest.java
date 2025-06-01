@@ -14,10 +14,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.*;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import com.fernando.ms.posts.app.utils.TestUtilPostMedia;
@@ -307,5 +304,28 @@ class PostRestAdapterTest {
 
         Mockito.verify(postInputPort, times(1)).me(anyString(),anyInt(),anyInt());
         Mockito.verify(postRestMapper, times(1)).toFluxPostAuthorResponse(any(Flux.class));
+    }
+
+    @Test
+    @DisplayName("When UserId Is Valid Expect Count Post By UserId")
+    void When_UserIdIsValid_Expect_CountPostByUserId() {
+        CountPostResponse countPostResponse = TestUtilPost.buildCountPostResponse();
+
+        when(postInputPort.countPostByUser(anyString())).thenReturn(Mono.just(2L));
+        when(postRestMapper.toCountPostResponse(anyLong())).thenReturn(Mono.just(countPostResponse));
+
+        webTestClient.get()
+                .uri( uriBuilder -> uriBuilder
+                        .path("/v1/posts/count")
+                        .build()
+                )
+                .header("X-User-Id","1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.count").isEqualTo(countPostResponse.count());
+
+        Mockito.verify(postInputPort, times(1)).countPostByUser(anyString());
+        Mockito.verify(postRestMapper, times(1)).toCountPostResponse(anyLong());
     }
 }
