@@ -16,4 +16,5 @@ public class Post {
     private LocalDateTime datePost;
     private String userId;
     private Set<Media> media;
+    private Author author;
 }

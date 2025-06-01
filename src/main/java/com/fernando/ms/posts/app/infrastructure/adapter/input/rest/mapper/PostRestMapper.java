@@ -6,6 +6,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import org.mapstruct.Mapper;
 import reactor.core.publisher.Flux;
@@ -24,6 +25,7 @@ public interface PostRestMapper {
     default Post toPost(String userId,CreatePostRequest rq){
         return Post.builder()
                 .content(rq.getContent())
+                .datePost(rq.getDatePost())
                 .userId(userId)
                 .media(mapMedia(rq.getMedia()))
                 .build();
@@ -44,5 +46,23 @@ public interface PostRestMapper {
                 .exists(exists)
                 .build();
     }
+
+    default Flux<PostAuthorResponse> toFluxPostAuthorResponse(Flux<Post> postFlux){
+        return postFlux.map(this::toPostAuthorResponse);
+    }
+
+    default  PostAuthorResponse toPostAuthorResponse(Post post){
+        return PostAuthorResponse.builder()
+                .id(post.getId())
+                .content(post.getContent())
+                .datePost(post.getDatePost())
+                .author( post.getAuthor().getNames()
+                        .concat(" ")
+                        .concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames())
+                        .trim())
+                .build();
+    }
+
+
 
 }

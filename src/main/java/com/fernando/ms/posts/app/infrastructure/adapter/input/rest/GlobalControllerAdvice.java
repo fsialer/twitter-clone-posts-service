@@ -1,8 +1,6 @@
 package com.fernando.ms.posts.app.infrastructure.adapter.input.rest;
 
-import com.fernando.ms.posts.app.domain.exceptions.PostDataNotFoundException;
-import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
-import com.fernando.ms.posts.app.domain.exceptions.PostRuleException;
+import com.fernando.ms.posts.app.domain.exceptions.*;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -20,8 +18,7 @@ import java.util.Collections;
 import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.enums.ErrorType.FUNCTIONAL;
 import static com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.enums.ErrorType.SYSTEM;
 import static com.fernando.ms.posts.app.infrastructure.utils.ErrorCatalog.*;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -76,6 +73,30 @@ public class GlobalControllerAdvice {
                 .timestamp(LocalDate.now().toString())
                 .build());
     }
+
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public Mono<ErrorResponse> handleAuthorNotFoundException() {
+        return Mono.just(ErrorResponse.builder()
+                .code(AUTHOR_NOT_FOUND.getCode())
+                .type(FUNCTIONAL)
+                .message(AUTHOR_NOT_FOUND.getMessage())
+                .timestamp(LocalDate.now().toString())
+                .build());
+    }
+
+    @ExceptionHandler(UserFallBackException.class)
+    @ResponseStatus(SERVICE_UNAVAILABLE)
+    public Mono<ErrorResponse> handleFallBackException(UserFallBackException e){
+        return Mono.just(
+                ErrorResponse.builder()
+                        .code(USERS_SERVICES_FAIL.getCode())
+                        .type(FUNCTIONAL)
+                        .message(USERS_SERVICES_FAIL.getMessage())
+                        .timestamp(LocalDate.now().toString())
+                        .build()
+        );
+    }
     
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
@@ -88,6 +109,4 @@ public class GlobalControllerAdvice {
                 .timestamp(LocalDate.now().toString())
                 .build());
     }
-
-
 }

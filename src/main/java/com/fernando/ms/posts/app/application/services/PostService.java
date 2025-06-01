@@ -1,18 +1,23 @@
 package com.fernando.ms.posts.app.application.services;
 
 import com.fernando.ms.posts.app.application.ports.input.PostInputPort;
+import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort;
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
+import com.fernando.ms.posts.app.domain.exceptions.AuthorNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
 import com.fernando.ms.posts.app.domain.models.Post;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PostService implements PostInputPort {
     private final PostPersistencePort postPersistencePort;
+    private final ExternalUserOutputPort externalUserOutputPort;
 
     @Override
     public Flux<Post> findAll() {
@@ -49,5 +54,32 @@ public class PostService implements PostInputPort {
     @Override
     public Mono<Boolean> verify(String id) {
         return postPersistencePort.verify(id);
+    }
+
+    @Override
+    public Flux<Post> recent(String userId,int page, int size) {
+        return externalUserOutputPort.findAuthorByUserId(userId)
+                .collectList()
+                .flatMapMany(authors-> postPersistencePort.recent(authors,page,size)
+                        .flatMap(post ->{
+                            authors.stream()
+                                    .filter(author -> author.getId().equals(post.getUserId()))
+                                    .findFirst()
+                                    .ifPresent(post::setAuthor);
+                            return Flux.just(post);
+                            }
+                        )
+                );
+    }
+
+    @Override
+    public Flux<Post> me(String userId, int page, int size) {
+        return externalUserOutputPort.me(userId)
+                .switchIfEmpty(Mono.error(AuthorNotFoundException::new))
+                .flatMapMany(author->
+                        postPersistencePort.me(userId,page,size)
+                            .doOnNext(post -> post.setAuthor(author)
+                            )
+                );
     }
 }

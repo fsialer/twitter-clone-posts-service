@@ -6,6 +6,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +87,33 @@ class PostRestMapperTest {
     void When_MappingBoolean_Expect_ExistsPostResponse(){
         ExistsPostResponse existsPostResponse=postRestMapper.toExistsPostResponse(Boolean.TRUE);
         assertTrue(existsPostResponse.getExists());
+    }
+
+    @Test
+    @DisplayName("When Mapping PostFlux Expect FluxPostAuthorResponse")
+    void When_MappingPostFlux_Expect_FluxPostAuthorResponse(){
+        Post post=TestUtilPost.buildPostMock();
+        Flux<PostAuthorResponse> fluxPostAuthorResponse=postRestMapper.toFluxPostAuthorResponse(Flux.just(post));
+        StepVerifier.create(fluxPostAuthorResponse)
+                        .consumeNextWith(postAuthor->{
+                            assertEquals(postAuthor.id(),post.getId());
+                            assertEquals(postAuthor.content(),post.getContent());
+                            assertEquals(postAuthor.author(),post.getAuthor().getNames().concat(" ").concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames()).trim());
+                        })
+                .verifyComplete();
+
+    }
+
+    @Test
+    @DisplayName("When Mapping Post Expect PostAuthorResponse")
+    void When_MappingPost_Expect_ostAuthorResponse(){
+        Post post=TestUtilPost.buildPostMock();
+        post.getAuthor().setLastNames(null);
+        PostAuthorResponse postAuthorResponse=postRestMapper.toPostAuthorResponse(post);
+        assertEquals(postAuthorResponse.id(),post.getId());
+        assertEquals(postAuthorResponse.content(),post.getContent());
+        assertEquals(postAuthorResponse.author(),post.getAuthor().getNames().concat(" ").concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames()).trim());
+
 
     }
 }
