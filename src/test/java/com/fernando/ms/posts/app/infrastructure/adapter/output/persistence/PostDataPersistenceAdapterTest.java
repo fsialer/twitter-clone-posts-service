@@ -96,4 +96,16 @@ class PostDataPersistenceAdapterTest {
 
         verify(postDataRepository, times(1)).deleteById(postId);
     }
+
+    @Test
+    @DisplayName("When PostId Exits Expect Count PostData By PostId")
+    void When_PostIdExists_Expect_CountPostDataByPostId() {
+        when(postDataRepository.countPostDataByPostId(anyString())).thenReturn(Mono.just(2L));
+        Mono<Long> result = postDataPersistenceAdapter.countPostDataByPost("1");
+
+        StepVerifier.create(result)
+                .expectNext(2L)
+                .verifyComplete();
+        verify(postDataRepository, times(1)).countPostDataByPostId(anyString());
+    }
 }

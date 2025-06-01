@@ -33,4 +33,9 @@ public class PostDataPersistenceAdapter implements PostDataPersistencePort {
     public Mono<Void> delete(String id) {
         return postDataRepository.deleteById(id).then();
     }
+
+    @Override
+    public Mono<Long> countPostDataByPost(String postId) {
+        return postDataRepository.countPostDataByPostId(postId);
+    }
 }

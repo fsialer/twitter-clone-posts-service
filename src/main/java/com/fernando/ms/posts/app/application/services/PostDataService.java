@@ -32,4 +32,9 @@ public class PostDataService implements PostDataInputPort {
                 .switchIfEmpty(Mono.error(PostDataNotFoundException::new))
                 .flatMap(postData->postDataPersistencePort.delete(id));
     }
+
+    @Override
+    public Mono<Long> countPostDataByPost(String postId) {
+        return postDataPersistencePort.countPostDataByPost(postId);
+    }
 }

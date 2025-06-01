@@ -4,6 +4,6 @@ import com.fernando.ms.posts.app.infrastructure.adapter.output.persistence.model
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
-public interface PostDataRepository extends ReactiveMongoRepository<PostDataDocument,String> {
+public interface PostDataRepository extends ReactiveMongoRepository<PostDataDocument,String>, PostDataRepositoryCustom {
     Mono<Boolean> existsByPostIdAndUserId(String postId, String userId);
 }

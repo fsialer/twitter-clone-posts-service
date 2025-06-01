@@ -328,4 +328,26 @@ class PostRestAdapterTest {
         Mockito.verify(postInputPort, times(1)).countPostByUser(anyString());
         Mockito.verify(postRestMapper, times(1)).toCountPostResponse(anyLong());
     }
+
+    @Test
+    @DisplayName("When PostId Is Valid Expect Count PostData By PostId")
+    void When_PostIdIsValid_Expect_CountPostDataByPostId() {
+        CountPostDataResponse countPostDataResponse = TestUtilPost.buildCountPostDataResponse();
+
+        when(postDataInputPort.countPostDataByPost(anyString())).thenReturn(Mono.just(2L));
+        when(postDataRestMapper.toCountPostDataResponse(anyLong())).thenReturn(Mono.just(countPostDataResponse));
+
+        webTestClient.get()
+                .uri( uriBuilder -> uriBuilder
+                        .path("/v1/posts/data/count/${postId}")
+                        .build("1")
+                )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.count").isEqualTo(countPostDataResponse.count());
+
+        Mockito.verify(postDataInputPort, times(1)).countPostDataByPost(anyString());
+        Mockito.verify(postDataRestMapper, times(1)).toCountPostDataResponse(anyLong());
+    }
 }
