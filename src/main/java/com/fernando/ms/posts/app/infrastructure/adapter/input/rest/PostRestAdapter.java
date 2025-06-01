@@ -146,5 +146,12 @@ public class PostRestAdapter {
         return postInputPort.countPostByUser(userId).flatMap(postRestMapper::toCountPostResponse);
     }
 
+    @GetMapping("/data/count/{postId}")
+    @Operation(summary = "Count of postdata by post")
+    @ApiResponse(responseCode = "200",description = "Count postdata")
+    public Mono<CountPostDataResponse> countPostDataByPostId(@PathVariable("postId") String postId){
+        return postDataInputPort.countPostDataByPost(postId).flatMap(postDataRestMapper::toCountPostDataResponse);
+    }
+
 
 }

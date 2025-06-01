@@ -106,5 +106,13 @@ public class TestUtilPost {
                 .build();
     }
 
+    public static CountPostDataResponse buildCountPostDataResponse(){
+        return CountPostDataResponse.builder()
+                .count(2L)
+                .build();
+    }
+
+
+
 
 }

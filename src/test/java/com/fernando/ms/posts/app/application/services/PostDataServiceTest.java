@@ -117,4 +117,14 @@ class PostDataServiceTest {
         verify(postDataPersistencePort, never()).delete(postId);
     }
 
+    @Test
+    @DisplayName("When PostId Exists Expect Count PostData By post")
+    void When_PostIdExists_Expect_CountPostDataByPost(){
+        when(postDataPersistencePort.countPostDataByPost(anyString())).thenReturn(Mono.just(2L));
+        Mono<Long> result=postDataService.countPostDataByPost("1");
+        StepVerifier.create(result)
+                .expectNext(2L)
+                .verifyComplete();
+    }
+
 }
