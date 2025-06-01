@@ -5,6 +5,7 @@ import com.fernando.ms.posts.app.application.ports.output.ExternalUserOutputPort
 import com.fernando.ms.posts.app.application.ports.output.PostPersistencePort;
 import com.fernando.ms.posts.app.domain.exceptions.AuthorNotFoundException;
 import com.fernando.ms.posts.app.domain.exceptions.PostNotFoundException;
+import com.fernando.ms.posts.app.domain.models.Author;
 import com.fernando.ms.posts.app.domain.models.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,16 @@ public class PostService implements PostInputPort {
 
     @Override
     public Mono<Post> findById(String id) {
-        return postPersistencePort.findById(id).switchIfEmpty(Mono.error(PostNotFoundException::new));
+        return postPersistencePort.findById(id)
+                .switchIfEmpty(Mono.error(PostNotFoundException::new))
+                .flatMap(post->
+                    externalUserOutputPort.findByUserId(post.getUserId())
+                            .map(author-> {
+                                log.info(author.getNames());
+                                post.setAuthor(author);
+                                return post;
+                            })
+                );
     }
 
     @Override
@@ -74,7 +84,7 @@ public class PostService implements PostInputPort {
 
     @Override
     public Flux<Post> me(String userId, int page, int size) {
-        return externalUserOutputPort.me(userId)
+        return externalUserOutputPort.findByUserId(userId)
                 .switchIfEmpty(Mono.error(AuthorNotFoundException::new))
                 .flatMapMany(author->
                         postPersistencePort.me(userId,page,size)

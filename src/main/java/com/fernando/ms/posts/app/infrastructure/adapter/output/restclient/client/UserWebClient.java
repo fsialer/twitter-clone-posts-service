@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface UserWebClient {
     Flux<UserResponse> findFollowedByFollowerId(String followerId);
-    Mono<UserResponse> findByUserId(String userId);
+    Mono<UserResponse> me(String userId);
 }

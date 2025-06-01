@@ -36,7 +36,7 @@ public class UserWebClientImpl implements UserWebClient {
     }
 
     @Override
-    public Mono<UserResponse> findByUserId(String userId) {
+    public Mono<UserResponse> me(String userId) {
         return webClient
                 .get()
                 .uri("/me")

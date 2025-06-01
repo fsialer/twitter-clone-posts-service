@@ -61,10 +61,10 @@ class UserRestClientAdapterTest {
     void When_ServiceUserIsAvailable_Expect_AnUser(){
         UserResponse userResponse=TestUtilUser.buildUserResponseMock();
         Author authorMock= TestUtilAuthor.buildAuthorMock();
-        when(userWebClient.findByUserId(anyString())).thenReturn(Mono.just(userResponse));
+        when(userWebClient.me(anyString())).thenReturn(Mono.just(userResponse));
         when(authorRestClientMapper.toMonoAuthor(any(Mono.class))).thenReturn(Mono.just(authorMock));
 
-        Mono<Author> authorMono=userRestClientAdapter.me("556621d65s26d");
+        Mono<Author> authorMono=userRestClientAdapter.findByUserId("556621d65s26d");
 
         StepVerifier.create(authorMono)
                 .consumeNextWith(author -> {
@@ -73,7 +73,7 @@ class UserRestClientAdapterTest {
                     assertEquals(author.getLastNames(),authorMock.getLastNames());
                 })
                 .verifyComplete();
-        Mockito.verify(userWebClient,times(1)).findByUserId(anyString());
+        Mockito.verify(userWebClient,times(1)).me(anyString());
         Mockito.verify(authorRestClientMapper,times(1)).toMonoAuthor(any(Mono.class));
     }
 

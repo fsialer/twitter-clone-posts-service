@@ -52,12 +52,15 @@ class PostServiceTest {
     @DisplayName("When Post Identifier Is Correct Except Post Information Correct")
     void When_UserIdentifierIsCorrect_Except_UserInformationCorrect(){
         Post post= TestUtilPost.buildPostMock();
+        Author author=TestUtilAuthor.buildAuthorMock();
         when(postPersistencePort.findById(anyString())).thenReturn(Mono.just(post));
+        when(externalUserOutputPort.findByUserId(anyString())).thenReturn(Mono.just(author));
         Mono<Post> postMono=postService.findById("1");
         StepVerifier.create(postMono)
                 .expectNext(post)
                 .verifyComplete();
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
+        Mockito.verify(externalUserOutputPort,times(1)).findByUserId(anyString());
     }
 
     @Test
@@ -69,8 +72,8 @@ class PostServiceTest {
                 .expectError(PostNotFoundException.class)
                 .verify();
         Mockito.verify(postPersistencePort,times(1)).findById(anyString());
+        Mockito.verify(externalUserOutputPort,never()).findByUserId(anyString());
     }
-
 
     @Test
     @DisplayName("When Post Is Saved Successfully Expect Post Information Correct")
@@ -216,7 +219,7 @@ class PostServiceTest {
         Post post1 = TestUtilPost.buildPostMock();
         post1.setUserId("d44d5d7sd5sd4s5d");
 
-        when(externalUserOutputPort.me(userId))
+        when(externalUserOutputPort.findByUserId(userId))
                 .thenReturn(Mono.just(author1));
 
         when(postPersistencePort.me(userId, page, size))
@@ -227,7 +230,7 @@ class PostServiceTest {
                 .expectNextMatches(post -> post.getAuthor().equals(author1))
                 .verifyComplete();
 
-        verify(externalUserOutputPort).me(userId);
+        verify(externalUserOutputPort).findByUserId(userId);
         verify(postPersistencePort).me(userId,page, size);
     }
 
@@ -244,7 +247,7 @@ class PostServiceTest {
         Post post1 = TestUtilPost.buildPostMock();
         post1.setUserId("d44d5d7sd5sd4s5d");
 
-        when(externalUserOutputPort.me(userId))
+        when(externalUserOutputPort.findByUserId(userId))
                 .thenReturn(Mono.empty());
 
         Flux<Post> result =postService.me(userId, page, size);
@@ -252,7 +255,7 @@ class PostServiceTest {
                 .expectError(AuthorNotFoundException.class)
                 .verify();
 
-        verify(externalUserOutputPort,times(1)).me(userId);
+        verify(externalUserOutputPort,times(1)).findByUserId(userId);
         verify(postPersistencePort,times(0)).me(userId,page, size);
     }
 }

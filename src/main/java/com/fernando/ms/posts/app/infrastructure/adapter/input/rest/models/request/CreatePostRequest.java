@@ -2,7 +2,6 @@ package com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reque
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

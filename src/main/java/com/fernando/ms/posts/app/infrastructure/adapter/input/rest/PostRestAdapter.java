@@ -51,9 +51,9 @@ public class PostRestAdapter {
     @GetMapping("/{id}")
     @Operation(summary = "Find post by id")
     @ApiResponse(responseCode = "200", description = "Found post by id")
-    public Mono<ResponseEntity<PostResponse>> findById(@PathVariable String id){
+    public Mono<ResponseEntity<PostAuthorResponse>> findById(@PathVariable String id){
         return postInputPort.findById(id)
-                .flatMap(post-> Mono.just(ResponseEntity.ok(postRestMapper.toPostResponse(post))));
+                .flatMap(post-> Mono.just(ResponseEntity.ok(postRestMapper.toPostAuthorResponse(post))));
     }
 
     @PostMapping

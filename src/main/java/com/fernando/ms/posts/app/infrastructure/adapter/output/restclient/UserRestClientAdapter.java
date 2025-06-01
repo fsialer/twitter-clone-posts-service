@@ -20,7 +20,7 @@ public class UserRestClientAdapter implements ExternalUserOutputPort {
     }
 
     @Override
-    public Mono<Author> me(String userId) {
-        return authorRestClientMapper.toMonoAuthor(userWebClient.findByUserId(userId));
+    public Mono<Author> findByUserId(String userId) {
+        return authorRestClientMapper.toMonoAuthor(userWebClient.me(userId));
     }
 }
