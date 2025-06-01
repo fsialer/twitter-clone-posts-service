@@ -10,10 +10,7 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -140,6 +137,13 @@ public class PostRestAdapter {
                                                    @RequestParam("page") @DefaultValue("0") int page,
                                                    @RequestParam("size") @DefaultValue("20")  int size){
         return postRestMapper.toFluxPostAuthorResponse(postInputPort.me(userId,page,size));
+    }
+
+    @GetMapping("/count")
+    @Operation(summary = "Count of post published by user")
+    @ApiResponse(responseCode = "200",description = "Count post published")
+    public Mono<CountPostResponse> countPostByUserId(@RequestHeader("X-User-Id") String userId){
+        return postInputPort.countPostByUser(userId).flatMap(postRestMapper::toCountPostResponse);
     }
 
 

@@ -5,11 +5,13 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import org.mapstruct.Mapper;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,6 +63,14 @@ public interface PostRestMapper {
                         .concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames())
                         .trim())
                 .build();
+    }
+
+    default Mono<CountPostResponse> toCountPostResponse(Long count){
+        return Mono.just(
+                CountPostResponse.builder()
+                        .count(count)
+                        .build()
+        );
     }
 
 

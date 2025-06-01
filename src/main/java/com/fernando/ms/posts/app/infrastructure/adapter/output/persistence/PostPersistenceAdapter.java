@@ -51,4 +51,9 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     public Flux<Post> me(String userId, int page, int size) {
         return postPersistenceMapper.toPosts(postReactiveMongoRepository.findAllByUserIdAndPagination(userId,page,size));
     }
+
+    @Override
+    public Mono<Long> countPostByUser(String userId) {
+        return postReactiveMongoRepository.countPostByUserId(userId);
+    }
 }
