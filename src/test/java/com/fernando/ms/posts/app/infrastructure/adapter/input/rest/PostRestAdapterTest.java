@@ -361,9 +361,10 @@ class PostRestAdapterTest {
 
         webTestClient.get()
                 .uri( uriBuilder -> uriBuilder
-                        .path("/v1/posts/data/{postId}/post/{userId}/exists")
-                        .build("1","1")
+                        .path("/v1/posts/data/{postId}/exists")
+                        .build("1")
                 )
+                .header("X-User-Id","1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
