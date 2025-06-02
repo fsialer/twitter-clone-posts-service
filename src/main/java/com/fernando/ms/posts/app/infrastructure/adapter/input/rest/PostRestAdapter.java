@@ -153,5 +153,12 @@ public class PostRestAdapter {
         return postDataInputPort.countPostDataByPost(postId).flatMap(postDataRestMapper::toCountPostDataResponse);
     }
 
+    @GetMapping("/data/{postId}/post/{userId}/exists")
+    @Operation(summary = "Verify exists of postdata")
+    @ApiResponse(responseCode = "200",description = "Exists Postdata")
+    public Mono<ExistsPostDataResponse> verifyExistsPostDataByPostIdAndUserId(@PathVariable("postId") String postId,@PathVariable("userId") String userId){
+        return postDataInputPort.verifyExistsPostData(postId,userId).flatMap(postDataRestMapper::toExistsPostDataResponse);
+    }
+
 
 }

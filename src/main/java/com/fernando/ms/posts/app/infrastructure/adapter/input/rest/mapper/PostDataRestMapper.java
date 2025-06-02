@@ -3,6 +3,7 @@ package com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper;
 import com.fernando.ms.posts.app.domain.models.PostData;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostDataResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostDataResponse;
 import org.mapstruct.Mapper;
 import reactor.core.publisher.Mono;
 
@@ -21,6 +22,14 @@ public interface PostDataRestMapper {
         return Mono.just(
                 CountPostDataResponse.builder()
                         .count(count)
+                        .build()
+        );
+    }
+
+    default Mono<ExistsPostDataResponse> toExistsPostDataResponse(Boolean exists){
+        return Mono.just(
+                ExistsPostDataResponse.builder()
+                        .exists(exists)
                         .build()
         );
     }
