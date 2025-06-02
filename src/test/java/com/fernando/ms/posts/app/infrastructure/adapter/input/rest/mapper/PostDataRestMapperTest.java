@@ -3,6 +3,7 @@ package com.fernando.ms.posts.app.infrastructure.adapter.input.rest.mapper;
 import com.fernando.ms.posts.app.domain.models.PostData;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostDataRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostDataResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostDataResponse;
 import com.fernando.ms.posts.app.utils.TestUtilPostData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +41,17 @@ class PostDataRestMapperTest {
         StepVerifier.create(countPostDataResponse)
                 .consumeNextWith(countPostData->{
                     assertEquals(2L, countPostData.count());
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("When Mapping Boolean Expect MonoExistsPostDataResponse")
+    void When_MappingBoolean_Expect_MonoExistsPostDataResponse(){
+        Mono<ExistsPostDataResponse> existsPostDataResponseMono=postDataRestMapper.toExistsPostDataResponse(Boolean.TRUE);
+        StepVerifier.create(existsPostDataResponseMono)
+                .consumeNextWith(countPostData->{
+                    assertEquals(true, countPostData.exists());
                 })
                 .verifyComplete();
     }

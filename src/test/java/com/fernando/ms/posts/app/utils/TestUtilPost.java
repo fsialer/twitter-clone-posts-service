@@ -112,7 +112,11 @@ public class TestUtilPost {
                 .build();
     }
 
-
+    public static ExistsPostDataResponse buildExistsPostDataResponseMock(){
+        return ExistsPostDataResponse.builder()
+                .exists(true)
+                .build();
+    }
 
 
 }

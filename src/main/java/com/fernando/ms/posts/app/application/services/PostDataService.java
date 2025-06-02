@@ -37,4 +37,9 @@ public class PostDataService implements PostDataInputPort {
     public Mono<Long> countPostDataByPost(String postId) {
         return postDataPersistencePort.countPostDataByPost(postId);
     }
+
+    @Override
+    public Mono<Boolean> verifyExistsPostData(String postId, String userId) {
+        return postDataPersistencePort.verifyPostData(postId,userId);
+    }
 }

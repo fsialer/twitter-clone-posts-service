@@ -127,4 +127,14 @@ class PostDataServiceTest {
                 .verifyComplete();
     }
 
+    @Test
+    @DisplayName("When PostId and UserId Exists Expect True")
+    void When_PostIdAndUserIdExists_Expect_True(){
+        when(postDataPersistencePort.verifyPostData(anyString(),anyString())).thenReturn(Mono.just(true));
+        Mono<Boolean> result=postDataService.verifyExistsPostData("1","1");
+        StepVerifier.create(result)
+                .expectNext(true)
+                .verifyComplete();
+    }
+
 }

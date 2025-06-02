@@ -7,4 +7,5 @@ public interface PostDataInputPort {
     Mono<Void> save(PostData postData);
     Mono<Void> delete(String id);
     Mono<Long> countPostDataByPost(String postId);
+    Mono<Boolean> verifyExistsPostData(String postId, String userId);
 }
