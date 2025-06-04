@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface PostDataInputPort {
     Mono<Void> save(PostData postData);
-    Mono<Void> delete(String id);
+    Mono<Void> delete(String postId,String userId);
     Mono<Long> countPostDataByPost(String postId);
     Mono<Boolean> verifyExistsPostData(String postId, String userId);
 }

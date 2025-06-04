@@ -218,14 +218,14 @@ class PostRestAdapterTest {
     @DisplayName("When Delete Data By Id Expect Complete Successfully")
     void When_DeleteDataById_Expect_CompleteSuccessfully() {
         String postDataId = "postDataId123";
-        when(postDataInputPort.delete(anyString())).thenReturn(Mono.empty());
+        when(postDataInputPort.delete(anyString(),anyString())).thenReturn(Mono.empty());
         webTestClient.delete()
                 .uri("/v1/posts/data/{id}", postDataId)
                 .header("X-User-Id", "1")
                 .exchange()
                 .expectStatus().isNoContent();
 
-        Mockito.verify(postDataInputPort, times(1)).delete(postDataId);
+        Mockito.verify(postDataInputPort, times(1)).delete(anyString(),anyString());
     }
 
 

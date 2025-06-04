@@ -5,9 +5,10 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.reques
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostDataResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostDataResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import reactor.core.publisher.Mono;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostDataRestMapper {
 
     default PostData toPostData(String userId,CreatePostDataRequest createPostDataRequest){

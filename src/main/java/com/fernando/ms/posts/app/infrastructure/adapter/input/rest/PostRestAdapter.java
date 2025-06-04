@@ -103,15 +103,15 @@ public class PostRestAdapter {
         return postDataInputPort.save(postDataRestMapper.toPostData(userId,rq));
     }
 
-    @DeleteMapping("/data/{id}")
+    @DeleteMapping("/data/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode ="204", description = "Deleted post data by id")
     @Operation(summary = "Delete post data by id")
     public Mono<Void> deleteData(
             @RequestHeader("X-User-Id") String userId,
-            @PathVariable String id
+            @PathVariable("postId") String postId
     ) {
-        return postDataInputPort.delete(id);
+        return postDataInputPort.delete(postId,userId);
     }
 
     @PostMapping("/media")

@@ -4,11 +4,12 @@ import com.fernando.ms.posts.app.domain.models.PostMedia;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreateMediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostMediaResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostMediaRestMapper {
     default List<String> toListString(CreateMediaRequest rq){
         return rq.getFilenames();

@@ -9,4 +9,5 @@ public interface PostDataPersistencePort {
     Mono<Boolean> verifyPostData(String postId,String userId);
     Mono<Void> delete(String id);
     Mono<Long> countPostDataByPost(String postId);
+    Mono<PostData> findByPostIdAndUserId(String postId, String userId);
 }

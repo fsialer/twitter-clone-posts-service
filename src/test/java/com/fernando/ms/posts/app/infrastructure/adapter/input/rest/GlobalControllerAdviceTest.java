@@ -132,10 +132,10 @@ class GlobalControllerAdviceTest {
     @Test
     @DisplayName("Expect PostDataNotFoundException When PostData Identifier Is Invalid")
     void Expect_PostDataNotFoundException_When_PostDataIdentifierIsInvalid() {
-        String postDataId = "postDataId123";
-        when(postDataInputPort.delete(anyString())).thenReturn(Mono.error(PostDataNotFoundException::new));
+        String postId = "postId123";
+        when(postDataInputPort.delete(anyString(),anyString())).thenReturn(Mono.error(PostDataNotFoundException::new));
         webTestClient.delete()
-                .uri("/v1/posts/data/{id}", postDataId)
+                .uri("/v1/posts/data/{postId}", postId)
                 .header("X-User-Id", "1")
                 .exchange()
                 .expectStatus().isNotFound()
@@ -145,7 +145,7 @@ class GlobalControllerAdviceTest {
                     assert response.getMessage().equals(POST_DATA_NOT_FOUND.getMessage());
                 });
 
-        Mockito.verify(postDataInputPort, times(1)).delete(postDataId);
+        Mockito.verify(postDataInputPort, times(1)).delete(anyString(),anyString());
     }
 
     @Test
