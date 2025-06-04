@@ -108,4 +108,25 @@ class PostDataPersistenceAdapterTest {
                 .verifyComplete();
         verify(postDataRepository, times(1)).countPostDataByPostId(anyString());
     }
+
+    @Test
+    @DisplayName("When Find By PostId And UserId Expect Return PostData")
+    void when_FindByPostIdAndUserId_Expect_ReturnPostData() {
+        String postId = "1";
+        String userId = "1";
+        PostDataDocument postDataDocument = TestUtilPostData.buildPostDataDocumentMock();
+        PostData postData = TestUtilPostData.buildPostDataMock();
+
+        when(postDataRepository.findByPostIdAndUserId(anyString(),anyString())).thenReturn(Mono.just(postDataDocument));
+        when(postDataPersistenceMapper.toPostData(any(Mono.class))).thenReturn(Mono.just(postData));
+
+        Mono<PostData> result = postDataPersistenceAdapter.findByPostIdAndUserId(postId,userId);
+
+        StepVerifier.create(result)
+                .expectNext(postData)
+                .verifyComplete();
+
+        verify(postDataRepository, times(1)).findByPostIdAndUserId(anyString(),anyString());
+        verify(postDataPersistenceMapper, times(1)).toPostData(any(Mono.class));
+    }
 }

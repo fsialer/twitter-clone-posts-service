@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface PostDataRepository extends ReactiveMongoRepository<PostDataDocument,String>, PostDataRepositoryCustom {
     Mono<Boolean> existsByPostIdAndUserId(String postId, String userId);
+    Mono<PostDataDocument> findByPostIdAndUserId(String postId, String userId);
 }

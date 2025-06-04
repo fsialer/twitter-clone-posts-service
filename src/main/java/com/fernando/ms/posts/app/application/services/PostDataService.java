@@ -27,10 +27,10 @@ public class PostDataService implements PostDataInputPort {
     }
 
     @Override
-    public Mono<Void> delete(String id) {
-        return postDataPersistencePort.findById(id)
+    public Mono<Void> delete(String postId,String userId) {
+        return postDataPersistencePort.findByPostIdAndUserId(postId,userId)
                 .switchIfEmpty(Mono.error(PostDataNotFoundException::new))
-                .flatMap(postData->postDataPersistencePort.delete(id));
+                .flatMap(postData->postDataPersistencePort.delete(postData.getId()));
     }
 
     @Override

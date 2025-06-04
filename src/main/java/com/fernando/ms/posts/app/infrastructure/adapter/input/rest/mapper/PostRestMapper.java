@@ -10,13 +10,14 @@ import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.respon
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostRestMapper {
     default Flux<PostResponse> toPostsResponse(Flux<Post> posts){
         return posts.map(this::toPostResponse);

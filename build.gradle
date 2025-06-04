@@ -73,7 +73,7 @@ tasks.named('test') {
 tasks.jacocoTestReport {
 	reports {
 		xml.required = true  // Necesario para SonarQube
-		html.required = false
+		html.required = true
 		csv.required = false
 	}
 

@@ -38,4 +38,9 @@ public class PostDataPersistenceAdapter implements PostDataPersistencePort {
     public Mono<Long> countPostDataByPost(String postId) {
         return postDataRepository.countPostDataByPostId(postId);
     }
+
+    @Override
+    public Mono<PostData> findByPostIdAndUserId(String postId, String userId) {
+        return postDataPersistenceMapper.toPostData(postDataRepository.findByPostIdAndUserId(postId,userId));
+    }
 }
