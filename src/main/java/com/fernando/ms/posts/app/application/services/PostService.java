@@ -31,7 +31,6 @@ public class PostService implements PostInputPort {
                 .flatMap(post->
                     externalUserOutputPort.findByUserId(post.getUserId())
                             .map(author-> {
-                                log.info(author.getNames());
                                 post.setAuthor(author);
                                 return post;
                             })
@@ -72,12 +71,12 @@ public class PostService implements PostInputPort {
                 .flatMapMany(authors-> postPersistencePort.recent(authors,page,size)
                         .flatMap(post ->{
                             authors.stream()
-                                    .filter(author -> author.getId().equals(post.getUserId()))
+                                    .filter(author -> author.getUserId().equals(post.getUserId()))
                                     .findFirst()
                                     .ifPresent(post::setAuthor);
                             return Flux.just(post);
                             }
-                        )
+                        ).log()
                 );
     }
 

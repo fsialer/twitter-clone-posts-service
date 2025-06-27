@@ -27,8 +27,8 @@ public class TestUtilPost {
                         .build()))
                 .author(Author.builder()
                         .id("5d4d75sd4sd6sd")
-                        .names("Fernando")
-                        .lastNames("Sialer")
+                        .fullName("Fernando Sialer")
+                        .userId("dsd5sd5s4d125s4d5sds")
                         .build())
                 .build();
     }
@@ -76,18 +76,6 @@ public class TestUtilPost {
     public static ExistsPostResponse buildExistsPostResponseMock(){
         return ExistsPostResponse.builder()
                 .exists(true)
-                .build();
-    }
-
-    public static PostUserResponse buildPostUserResponseMock(){
-        return PostUserResponse.builder()
-                .id("67894256c864356454574770")
-                .content("Hello everybody")
-                .datePost(LocalDateTime.now())
-                .user(UserResponse.builder()
-                        .id(1L)
-                        .names("Fernando Sialer")
-                        .build())
                 .build();
     }
 

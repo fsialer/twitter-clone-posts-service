@@ -6,8 +6,8 @@ public class TestUtilUser {
     public static UserResponse buildUserResponseMock(){
         return UserResponse.builder()
                 .id("5d4d75sd4sd6sd")
-                .names("Fernando")
-                .lastNames("Sialer")
+                .fullName("Fernando Sialer")
+                .userId("dsd5sd5s4d125s4d5sds")
                 .build();
     }
 }
