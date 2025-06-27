@@ -187,9 +187,10 @@ class PostServiceTest {
 
         Author author1 = TestUtilAuthor.buildAuthorMock();
         author1.setId("d44d5d7sd5sd4s5d");
+        author1.setUserId("dsds5415");
 
         Post post1 = TestUtilPost.buildPostMock();
-        post1.setUserId("d44d5d7sd5sd4s5d");
+        post1.setUserId("dsds5415");
 
         when(externalUserOutputPort.findAuthorByUserId(userId))
                 .thenReturn(Flux.just(author1));

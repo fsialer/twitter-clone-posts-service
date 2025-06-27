@@ -66,8 +66,8 @@ class UserWebClientImplTest {
         StepVerifier.create(userWebClientImpl.findFollowedByFollowerId(followerId))
                 .consumeNextWith(user->{
                     assertEquals(user.id(),userResponse.id());
-                    assertEquals(user.names(),userResponse.names());
-                    assertEquals(user.lastNames(),userResponse.lastNames());
+                    assertEquals(user.fullName(),userResponse.fullName());
+                    assertEquals(user.userId(),userResponse.userId());
                 })
                 .verifyComplete();
     }
@@ -115,8 +115,8 @@ class UserWebClientImplTest {
         StepVerifier.create(result)
                 .consumeNextWith(user->{
                     assertEquals(user.id(),userResponse.id());
-                    assertEquals(user.names(),userResponse.names());
-                    assertEquals(user.lastNames(),userResponse.lastNames());
+                    assertEquals(user.fullName(),userResponse.fullName());
+                    assertEquals(user.userId(),userResponse.userId());
                 })
                 .verifyComplete();
     }

@@ -36,8 +36,7 @@ class PostReactiveMongoRepositoryImplTest {
         Author author1 = TestUtilAuthor.buildAuthorMock();
         Author author2 = TestUtilAuthor.buildAuthorMock();
         author2.setId("4d786ds8sd56sd");
-        author2.setNames("John");
-        author2.setLastNames("Doe");
+        author2.setFullName("John Doe");
         PostDocument postDocument1 = TestUtilPost.buildPostDocumentMock();
         PostDocument postDocument2 = TestUtilPost.buildPostDocumentMock();
         postDocument2.setId("d854gorfd4");

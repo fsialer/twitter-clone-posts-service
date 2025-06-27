@@ -48,8 +48,8 @@ class UserRestClientAdapterTest {
         StepVerifier.create(authorFlux)
                 .consumeNextWith(author -> {
                     assertEquals(author.getId(),authorMock.getId());
-                    assertEquals(author.getNames(),authorMock.getNames());
-                    assertEquals(author.getLastNames(),authorMock.getLastNames());
+                    assertEquals(author.getFullName(),authorMock.getFullName());
+                    assertEquals(author.getUserId(),authorMock.getUserId());
                 })
                 .verifyComplete();
         Mockito.verify(userWebClient,times(1)).findFollowedByFollowerId(anyString());
@@ -69,8 +69,8 @@ class UserRestClientAdapterTest {
         StepVerifier.create(authorMono)
                 .consumeNextWith(author -> {
                     assertEquals(author.getId(),authorMock.getId());
-                    assertEquals(author.getNames(),authorMock.getNames());
-                    assertEquals(author.getLastNames(),authorMock.getLastNames());
+                    assertEquals(author.getFullName(),authorMock.getFullName());
+                    assertEquals(author.getUserId(),authorMock.getUserId());
                 })
                 .verifyComplete();
         Mockito.verify(userWebClient,times(1)).me(anyString());

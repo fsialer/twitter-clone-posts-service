@@ -9,6 +9,6 @@ import lombok.*;
 @Builder
 public class Author {
     private String id;
-    private String names;
-    private String lastNames;
+    private String fullName;
+    private String userId;
 }

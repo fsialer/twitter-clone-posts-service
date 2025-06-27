@@ -59,10 +59,7 @@ public interface PostRestMapper {
                 .id(post.getId())
                 .content(post.getContent())
                 .datePost(post.getDatePost())
-                .author( post.getAuthor().getNames()
-                        .concat(" ")
-                        .concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames())
-                        .trim())
+                .author( post.getAuthor().getFullName())
                 .build();
     }
 

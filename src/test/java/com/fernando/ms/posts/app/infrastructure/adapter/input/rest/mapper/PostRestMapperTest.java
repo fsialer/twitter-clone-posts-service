@@ -100,7 +100,7 @@ class PostRestMapperTest {
                         .consumeNextWith(postAuthor->{
                             assertEquals(postAuthor.id(),post.getId());
                             assertEquals(postAuthor.content(),post.getContent());
-                            assertEquals(postAuthor.author(),post.getAuthor().getNames().concat(" ").concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames()).trim());
+                            assertEquals(postAuthor.author(),post.getAuthor().getFullName());
                         })
                 .verifyComplete();
 
@@ -110,11 +110,10 @@ class PostRestMapperTest {
     @DisplayName("When Mapping Post Expect PostAuthorResponse")
     void When_MappingPost_Expect_ostAuthorResponse(){
         Post post=TestUtilPost.buildPostMock();
-        post.getAuthor().setLastNames(null);
         PostAuthorResponse postAuthorResponse=postRestMapper.toPostAuthorResponse(post);
         assertEquals(postAuthorResponse.id(),post.getId());
         assertEquals(postAuthorResponse.content(),post.getContent());
-        assertEquals(postAuthorResponse.author(),post.getAuthor().getNames().concat(" ").concat(post.getAuthor().getLastNames()==null?"":post.getAuthor().getLastNames()).trim());
+        assertEquals(postAuthorResponse.author(),post.getAuthor().getFullName());
     }
 
     @Test

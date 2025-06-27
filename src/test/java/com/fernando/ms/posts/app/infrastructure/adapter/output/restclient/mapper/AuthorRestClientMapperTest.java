@@ -30,8 +30,8 @@ class AuthorRestClientMapperTest {
         StepVerifier.create(fluxAuthor)
                 .consumeNextWith(author1 -> {
                     assertEquals(author1.getId(),author.getId());
-                    assertEquals(author1.getNames(),author.getNames());
-                    assertEquals(author1.getLastNames(),author.getLastNames());
+                    assertEquals(author1.getFullName(),author.getFullName());
+                    assertEquals(author1.getUserId(),author.getUserId());
                 })
                 .verifyComplete();
     }
@@ -43,8 +43,8 @@ class AuthorRestClientMapperTest {
         Author author= TestUtilAuthor.buildAuthorMock();
         Author authorMapper= authorRestClientMapper.toAuthor(userResponse);
         assertEquals(authorMapper.getId(),author.getId());
-        assertEquals(authorMapper.getNames(),author.getNames());
-        assertEquals(authorMapper.getLastNames(),author.getLastNames());
+        assertEquals(authorMapper.getFullName(),author.getFullName());
+        assertEquals(authorMapper.getUserId(),author.getUserId());
     }
 
     @Test
@@ -56,8 +56,8 @@ class AuthorRestClientMapperTest {
         StepVerifier.create(monoAuthor)
                 .consumeNextWith(author1 -> {
                     assertEquals(author1.getId(),author.getId());
-                    assertEquals(author1.getNames(),author.getNames());
-                    assertEquals(author1.getLastNames(),author.getLastNames());
+                    assertEquals(author1.getFullName(),author.getFullName());
+                    assertEquals(author1.getUserId(),author.getUserId());
                 })
                 .verifyComplete();
     }

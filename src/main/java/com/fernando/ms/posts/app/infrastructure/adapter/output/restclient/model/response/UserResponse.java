@@ -3,5 +3,5 @@ package com.fernando.ms.posts.app.infrastructure.adapter.output.restclient.model
 import lombok.Builder;
 
 @Builder
-public record UserResponse(String id,String names,String lastNames) {
+public record UserResponse(String id, String fullName,String userId) {
 }

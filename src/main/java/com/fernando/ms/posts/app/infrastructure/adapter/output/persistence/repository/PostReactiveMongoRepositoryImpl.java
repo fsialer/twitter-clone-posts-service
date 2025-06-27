@@ -27,7 +27,7 @@ public class PostReactiveMongoRepositoryImpl implements PostReactiveMongoReposit
 
     @Override
     public Flux<PostDocument> findPostByAuthorsAndPagination(List<Author> authors, int page, int size) {
-        Set<String>ids=authors.stream().map(Author::getId).collect(Collectors.toSet());
+        Set<String>ids=authors.stream().map(Author::getUserId).collect(Collectors.toSet());
         Query query=new Query(Criteria.where(ATTRIBUTE_USERID).in(ids.stream().toList()));
         query.with(Sort.by(Sort.Direction.DESC,"datePost"))
                 .skip((long) (page-1)*size)
