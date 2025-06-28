@@ -167,7 +167,7 @@ class PostPersistenceAdapterTest {
     @Test
     @DisplayName("When PostId And UserId Is Valid Expect True")
     void When_PostIdAndUserIdIsValid_Expect_True() {
-        when(postReactiveMongoRepository.existsByPostIdAndUserId(anyString(),anyString())).thenReturn(Mono.just(true));
+        when(postReactiveMongoRepository.existsByIdAndUserId(anyString(),anyString())).thenReturn(Mono.just(true));
 
         Mono<Boolean> result = postPersistenceAdapter.verifyPostByIdUserId("678318b2c8dda45d9a6c300d","d41dswyu2g4557df");
 
@@ -175,13 +175,13 @@ class PostPersistenceAdapterTest {
                 .expectNext(true)
                 .verifyComplete();
 
-        Mockito.verify(postReactiveMongoRepository, times(1)).existsByPostIdAndUserId(anyString(),anyString());
+        Mockito.verify(postReactiveMongoRepository, times(1)).existsByIdAndUserId(anyString(),anyString());
     }
 
     @Test
     @DisplayName("When PostId And UserId Is Valid Expect False")
     void When_PostIdAndUserIdIsValid_Expect_False() {
-        when(postReactiveMongoRepository.existsByPostIdAndUserId(anyString(),anyString())).thenReturn(Mono.just(false));
+        when(postReactiveMongoRepository.existsByIdAndUserId(anyString(),anyString())).thenReturn(Mono.just(false));
 
         Mono<Boolean> result = postPersistenceAdapter.verifyPostByIdUserId("678318b2c8dda45d9a6c300d","d41dswyu2g4557df");
 
@@ -189,6 +189,6 @@ class PostPersistenceAdapterTest {
                 .expectNext(false)
                 .verifyComplete();
 
-        Mockito.verify(postReactiveMongoRepository, times(1)).existsByPostIdAndUserId(anyString(),anyString());
+        Mockito.verify(postReactiveMongoRepository, times(1)).existsByIdAndUserId(anyString(),anyString());
     }
 }

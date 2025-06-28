@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 public interface PostReactiveMongoRepository extends ReactiveMongoRepository<PostDocument,String>
 , PostReactiveMongoRepositoryCustom {
     Flux<PostDocument> findAllByUserId(String userId);
-    Mono<Boolean> existsByPostIdAndUserId(String postId, String userId);
+    Mono<Boolean> existsByIdAndUserId(String id, String userId);
 }
