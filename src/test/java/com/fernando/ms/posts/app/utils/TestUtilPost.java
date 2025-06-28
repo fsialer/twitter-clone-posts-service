@@ -106,5 +106,10 @@ public class TestUtilPost {
                 .build();
     }
 
+    public static ExistsPostUserResponse buildExistsPostUserResponseMock(){
+        return ExistsPostUserResponse.builder()
+                .exists(true)
+                .build();
+    }
 
 }

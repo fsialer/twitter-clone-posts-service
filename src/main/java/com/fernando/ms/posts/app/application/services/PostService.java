@@ -95,4 +95,9 @@ public class PostService implements PostInputPort {
     public Mono<Long> countPostByUser(String userId) {
         return postPersistencePort.countPostByUser(userId);
     }
+
+    @Override
+    public Mono<Boolean> verifyPostByUserId(String postId, String userId) {
+        return postPersistencePort.verifyPostByIdUserId(postId,userId);
+    }
 }

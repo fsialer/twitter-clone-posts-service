@@ -14,4 +14,5 @@ public interface PostInputPort {
     Flux<Post> recent(String userId,int page,int size);
     Flux<Post> me(String userId,int page,int size);
     Mono<Long> countPostByUser(String userId);
+    Mono<Boolean> verifyPostByUserId(String postId, String userId);
 }

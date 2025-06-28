@@ -5,10 +5,7 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.*;
 import com.fernando.ms.posts.app.utils.TestUtilPost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -125,5 +122,12 @@ class PostRestMapperTest {
                     assertEquals(2L, countPost.count());
                 })
                 .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("When Mapping Boolean Expect ExistsPostUserResponse")
+    void When_MappingBoolean_Expect_ExistsPostUserResponse(){
+        ExistsPostUserResponse existsPostUserResponse=postRestMapper.toExistsPostUserResponse(Boolean.TRUE);
+        assertTrue(existsPostUserResponse.exists());
     }
 }

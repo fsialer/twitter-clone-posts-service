@@ -56,4 +56,9 @@ public class PostPersistenceAdapter implements PostPersistencePort {
     public Mono<Long> countPostByUser(String userId) {
         return postReactiveMongoRepository.countPostByUserId(userId);
     }
+
+    @Override
+    public Mono<Boolean> verifyPostByIdUserId(String postId, String userId) {
+        return postReactiveMongoRepository.existsByPostIdAndUserId(postId,userId);
+    }
 }

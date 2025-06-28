@@ -16,4 +16,5 @@ public interface PostPersistencePort {
     Flux<Post> recent(List<Author> authors,int page, int size);
     Flux<Post> me(String userId,int page, int size);
     Mono<Long> countPostByUser(String userId);
+    Mono<Boolean> verifyPostByIdUserId(String postId, String userId);
 }

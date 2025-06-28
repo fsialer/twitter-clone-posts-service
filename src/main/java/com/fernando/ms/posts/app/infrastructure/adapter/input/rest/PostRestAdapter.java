@@ -160,5 +160,12 @@ public class PostRestAdapter {
         return postDataInputPort.verifyExistsPostData(postId,userId).flatMap(postDataRestMapper::toExistsPostDataResponse);
     }
 
+    @GetMapping("/{postId}/user")
+    @Operation(summary = "Verify exists of post by user authenticated")
+    @ApiResponse(responseCode = "200",description = "Exists Post by user authenticated")
+    public Mono<ExistsPostUserResponse> verifyPostByUserId(@RequestHeader("X-User-Id")  String userId,@PathVariable("postId") String postId){
+        return postInputPort.verifyPostByUserId(postId,userId).map(postRestMapper::toExistsPostUserResponse);
+    }
+
 
 }

@@ -352,8 +352,8 @@ class PostRestAdapterTest {
     }
 
     @Test
-    @DisplayName("When PostId And UserId Is Valid Expect True")
-    void When_PostIdAndUserIdIsValid_Expect_True() {
+    @DisplayName("When PostId And UserId Are Valid Expect True")
+    void When_PostIdAndUserIdAreValid_Expect_True() {
         ExistsPostDataResponse existsPostDataResponse = TestUtilPost.buildExistsPostDataResponseMock();
 
         when(postDataInputPort.verifyExistsPostData(anyString(),anyString())).thenReturn(Mono.just(Boolean.TRUE));
@@ -372,5 +372,28 @@ class PostRestAdapterTest {
 
         Mockito.verify(postDataInputPort, times(1)).verifyExistsPostData(anyString(),anyString());
         Mockito.verify(postDataRestMapper, times(1)).toExistsPostDataResponse(anyBoolean());
+    }
+
+    @Test
+    @DisplayName("When PostId And UserId Is Valid Expect True For Post")
+    void When_PostIdAndUserIdAreValid_Expect_TrueForPost() {
+        ExistsPostUserResponse existsPostUserResponse = TestUtilPost.buildExistsPostUserResponseMock();
+
+        when(postInputPort.verifyPostByUserId(anyString(),anyString())).thenReturn(Mono.just(Boolean.TRUE));
+        when(postRestMapper.toExistsPostUserResponse(anyBoolean())).thenReturn(existsPostUserResponse);
+
+        webTestClient.get()
+                .uri( uriBuilder -> uriBuilder
+                        .path("/v1/posts/{postId}/user")
+                        .build("1")
+                )
+                .header("X-User-Id","1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.exists").isEqualTo(existsPostUserResponse.exists());
+
+        Mockito.verify(postInputPort, times(1)).verifyPostByUserId(anyString(),anyString());
+        Mockito.verify(postRestMapper, times(1)).toExistsPostUserResponse(anyBoolean());
     }
 }
