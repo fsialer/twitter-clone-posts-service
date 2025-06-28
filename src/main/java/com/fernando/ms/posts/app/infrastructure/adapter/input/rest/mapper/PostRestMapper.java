@@ -5,10 +5,7 @@ import com.fernando.ms.posts.app.domain.models.Post;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.CreatePostRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.MediaRequest;
 import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.request.UpdatePostRequest;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.CountPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.ExistsPostResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostAuthorResponse;
-import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.PostResponse;
+import com.fernando.ms.posts.app.infrastructure.adapter.input.rest.models.response.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import reactor.core.publisher.Flux;
@@ -69,6 +66,13 @@ public interface PostRestMapper {
                         .count(count)
                         .build()
         );
+    }
+
+    default ExistsPostUserResponse toExistsPostUserResponse(Boolean exists){
+        return ExistsPostUserResponse.builder()
+                        .exists(exists)
+                        .build();
+
     }
 
 
